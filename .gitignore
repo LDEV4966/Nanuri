@@ -48,3 +48,8 @@ out/
 *.html
 *.bin
 *.xml
+
+### Authentication
+
+application-oauth.properties
+application-real-db.properties
