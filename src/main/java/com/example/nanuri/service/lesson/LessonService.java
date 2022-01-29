@@ -22,9 +22,7 @@ public class LessonService {
     public void save(LessonRequestDto lessonRequestDto) throws IOException {
         lessonRepository.save(lessonRequestDto.toEntity());
         for(MultipartFile multipartFile : lessonRequestDto.getImages()){
-            s3Service.upload(multipartFile, "lessonImg");
+            System.out.println(s3Service.upload(multipartFile, "lessonImg"));
         }
     }
-
-
 }

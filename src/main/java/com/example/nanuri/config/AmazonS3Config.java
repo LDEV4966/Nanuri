@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 //따로 config 디렉토리에서 설정 값을 넣기 위해서 AmazonS3Config 설정 클래스
-// aws.yml 파일에 작성한 값들을 읽어와서 AmazonS3Client 객체를 만들어 Bean으로 주입
+// aws.properties 파일에 작성한 값들을 읽어와서 AmazonS3Client 객체를 만들어 Bean으로 주입
 @Configuration
 public class AmazonS3Config {
     @Value("${cloud.aws.credentials.access-key}")
