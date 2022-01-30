@@ -55,7 +55,7 @@ public class Lesson extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void updateStatus(boolean updatedStatus){
-        this.status = updatedStatus;
+    public void updateStatus(){
+        this.status = !this.status;
     }
 }

@@ -64,13 +64,19 @@ public class LessonService {
         return new LessonResponseDto(lesson);
     }
 
-
     @Transactional
     public void delete(int lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(()-> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId));
         lessonImgRepository.deleteAllByLessonId(lessonId);
         lessonRepository.delete(lesson);
+    }
+
+    @Transactional
+    public void updateStatus(int lessonId){
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()-> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId));
+        lesson.updateStatus();
     }
 
 }

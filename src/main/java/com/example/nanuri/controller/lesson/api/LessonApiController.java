@@ -31,6 +31,11 @@ public class LessonApiController {
         return lessonService.findByLocation(location);
     }
 
+    @PutMapping(path = "/lesson/{lessonId}/updateStatus")
+    public void updateStatus(@PathVariable int lessonId){
+        lessonService.updateStatus(lessonId);
+    }
+
     @GetMapping(path = "/lesson/info/{lessonId}")
     public LessonResponseDto findById(@PathVariable int lessonId){
         return lessonService.findById(lessonId);
