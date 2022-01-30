@@ -3,12 +3,15 @@ package com.example.nanuri.domain.lesson;
 import com.example.nanuri.domain.BaseTimeEntity;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImg;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 @Entity
 public class Lesson extends BaseTimeEntity {
 
@@ -34,6 +37,10 @@ public class Lesson extends BaseTimeEntity {
     @Column(length = 500)
     private String content;
 
+    @Column
+    @ColumnDefault("true")
+    private Boolean status;
+
     @OneToMany(fetch = FetchType.EAGER )
     @JoinColumn(name = "lessonId")
     private List<LessonImg> images;
@@ -46,5 +53,9 @@ public class Lesson extends BaseTimeEntity {
         this.location = location;
         this.limitedNumber = limitedNumber;
         this.content = content;
+    }
+
+    public void updateStatus(boolean updatedStatus){
+        this.status = updatedStatus;
     }
 }

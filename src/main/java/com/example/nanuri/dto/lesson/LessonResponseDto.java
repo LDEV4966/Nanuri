@@ -5,6 +5,7 @@ import com.example.nanuri.domain.lesson.lessonImg.LessonImg;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class LessonResponseDto {
 
     private LocalDateTime createDate;
 
+    private Boolean status;
+
     private List<LessonImg> images;
 
     public LessonResponseDto(Lesson entity){
@@ -39,6 +42,7 @@ public class LessonResponseDto {
         this.limitedNumber = entity.getLimitedNumber();
         this.content = entity.getContent();
         this.createDate = entity.getCreateDate();
+        this.status =entity.getStatus();
         this.images = entity.getImages();
     }
 
