@@ -15,7 +15,7 @@ public interface LessonImgRepository extends JpaRepository<LessonImg,LessonImgId
     //	벌크 연산후에 영속성 컨텍스트를 초기화하고 싶으면 clearAutomatically 옵션을 true로 주면 된다. 기본값은 false이다
     @Modifying
     @Query(
-            value = "delete from LESSON_IMG where LESSON_ID = :lessonId" , nativeQuery = true
+            value = "delete from lesson_img where LESSON_ID = :lessonId" , nativeQuery = true
     )
     void deleteAllByLessonId(@Param("lessonId") int lessonId);
 }
