@@ -7,7 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 @Entity
 public class Lesson extends BaseTimeEntity {
