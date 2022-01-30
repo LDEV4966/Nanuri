@@ -32,6 +32,13 @@ dependencies {
     testImplementation('org.projectlombok:lombok')
     testAnnotationProcessor('org.projectlombok:lombok')
 
+    //DB관련
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa') // Springboot 용 Spring Data jpa 추상화 라이브러리
+    implementation("org.mariadb.jdbc:mariadb-java-client")// MariaDB Driver
+    implementation('com.h2database:h2') // 인메모리 관계형 데이타베이스, 메모리에서만 실행되기에 재시작 할때마다 초기화 된다는 점을 이용하여 테스트용도로 많이 사용됨
+
+    //AWS
+    implementation('org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
