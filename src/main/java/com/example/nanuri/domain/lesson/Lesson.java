@@ -1,15 +1,16 @@
 package com.example.nanuri.domain.lesson;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.nanuri.domain.BaseTimeEntity;
+import com.example.nanuri.domain.lesson.lessonImg.LessonImg;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Getter
+@Data
 @NoArgsConstructor
 @Entity
-public class Lesson {
+public class Lesson extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +22,12 @@ public class Lesson {
     @Column
     private String description;
 
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "lessonId")
+    private List<LessonImg> lessonImgs;
+
     @Builder
-    public Lesson(String title, String description) {
+    public Lesson(String title, String description)  {
         this.title = title;
         this.description = description;
     }

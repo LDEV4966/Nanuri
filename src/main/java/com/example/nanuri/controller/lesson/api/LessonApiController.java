@@ -1,5 +1,6 @@
 package com.example.nanuri.controller.lesson.api;
 
+import com.example.nanuri.domain.lesson.Lesson;
 import com.example.nanuri.dto.LessonRequestDto;
 import com.example.nanuri.dto.LessonSaveRequestDto;
 import com.example.nanuri.service.lesson.LessonService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,5 +21,10 @@ public class LessonApiController {
     @PostMapping(path = "/lesson")
     public void save(@ModelAttribute LessonRequestDto lessonRequestDto) throws IOException {
         lessonService.save(lessonRequestDto);
+    }
+
+    @GetMapping(path = "/lesson")
+    public List<Lesson> findAll()  {
+        return lessonService.findAll();
     }
 }
