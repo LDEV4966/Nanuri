@@ -14,21 +14,37 @@ public class Lesson extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long lessonId;
+    private int lessonId;
+
+    @Column(nullable = false,length = 20)
+    private String creator;
+
+    @Column(nullable = false,length = 30)
+    private String lessonName;
 
     @Column
-    private String title;
+    private String category;
 
     @Column
-    private String description;
+    private String location;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @Column
+    private int limitedNumber;
+
+    @Column(length = 500)
+    private String content;
+
+    @OneToMany(fetch = FetchType.EAGER )
     @JoinColumn(name = "lessonId")
-    private List<LessonImg> lessonImgs;
+    private List<LessonImg> images;
 
     @Builder
-    public Lesson(String title, String description)  {
-        this.title = title;
-        this.description = description;
+    public Lesson(String creator, String lessonName, String category, String location, int limitedNumber, String content) {
+        this.creator = creator;
+        this.lessonName = lessonName;
+        this.category = category;
+        this.location = location;
+        this.limitedNumber = limitedNumber;
+        this.content = content;
     }
 }

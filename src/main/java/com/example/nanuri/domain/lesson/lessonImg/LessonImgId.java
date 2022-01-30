@@ -15,13 +15,13 @@ import java.io.Serializable;
 public class LessonImgId implements Serializable {
 
     @Column(name = "lessonId")
-    private Long lessonId;
+    private int lessonId;
 
     @Column (name = "lessonImg")
     private String lessonImg;
 
     @Builder
-    public LessonImgId(Long lessonId, String lessonImg) {
+    public LessonImgId(int lessonId, String lessonImg) {
         this.lessonId = lessonId;
         this.lessonImg = lessonImg;
     }
