@@ -68,6 +68,10 @@ public class LessonService {
     public void delete(int lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(()-> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId));
+        List<LessonImg> lessonImgs = lessonImgRepository.findByLessonId(lessonId);
+        for(LessonImg lessonImg : lessonImgs){
+            s3Service.deleteImage(lessonImg.getLessonImgId().getLessonImg());
+        }
         lessonImgRepository.deleteAllByLessonId(lessonId);
         lessonRepository.delete(lesson);
     }

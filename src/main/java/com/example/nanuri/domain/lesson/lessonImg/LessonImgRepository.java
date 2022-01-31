@@ -18,4 +18,10 @@ public interface LessonImgRepository extends JpaRepository<LessonImg,LessonImgId
             value = "delete from lesson_img where LESSON_ID = :lessonId" , nativeQuery = true
     )
     void deleteAllByLessonId(@Param("lessonId") int lessonId);
+
+    @Modifying
+    @Query(
+            value = "select * from lesson_img where LESSON_ID = :lessonId" , nativeQuery = true
+    )
+    List<LessonImg> findByLessonId(int lessonId);
 }

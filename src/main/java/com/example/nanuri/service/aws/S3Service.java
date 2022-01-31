@@ -2,6 +2,7 @@ package com.example.nanuri.service.aws;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,5 +74,17 @@ public class S3Service {
         }
 
         return Optional.empty();
+    }
+
+    public void deleteImage(String fileUrl) {
+
+        String source = null;
+        try {
+            source = URLDecoder.decode(fileUrl.replace("https://nanuri-file.s3.ap-northeast-2.amazonaws.com/", ""), "UTF-8");
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, source));
+            log.info(source + " : s3에서 삭제 되었습니다.");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }
