@@ -46,7 +46,9 @@ public class S3Service {
 
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
+        log.info(fileName + " : 업로드 준비완료.");
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        log.info(amazonS3Client.getUrl(bucket, fileName).toString() + " : 업로드 된 url 정보.");
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
