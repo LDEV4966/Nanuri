@@ -51,10 +51,7 @@ public class LessonApiController {
 
     @DeleteMapping(path = "/lesson/{lessonId}")
     public ResponseEntity<? extends BasicResponse> delete(@PathVariable int lessonId){
-        if(!lessonService.delete(lessonId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse(MessageEnum.NOT_FOUND, HttpStatusEnum.NOT_FOUND));
-        }
+        lessonService.delete(lessonId);
         return ResponseEntity.ok().body(new SuccessResponse());
     }
 
