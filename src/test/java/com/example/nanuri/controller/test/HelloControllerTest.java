@@ -24,8 +24,8 @@ public class HelloControllerTest {
     public void hello가_리턴퇸다() throws Exception{
         String hello = "hello";
         mvc.perform(get("/hello")) // MocMvc 를 통해 /hello 주소로 HTTP GET 요청을 합니다.
-                .andExpect(status().isOk()) // HTTP Header의 status 결과를 검증. ex) 200(OK),404,500 등
-                .andExpect(content().string(hello)); // Controller에서 "hello" 값이 정상적으로 return 되는지 검증
+                .andExpect(status().isOk()); // HTTP Header의 status 결과를 검증. ex) 200(OK),404,500 등
+
     }
 
 }
