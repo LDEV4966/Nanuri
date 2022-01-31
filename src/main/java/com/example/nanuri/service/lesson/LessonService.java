@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,20 +27,20 @@ public class LessonService {
     private final S3Service s3Service;
 
     @Transactional
-    public void save(LessonRequestDto lessonRequestDto) throws IOException {
-        int lessonId  = lessonRepository.save(lessonRequestDto.toEntity()).getLessonId();
-        if(lessonRequestDto.getImages()==null)
-            return;
-        for(MultipartFile multipartFile : lessonRequestDto.getImages()){
-            String lessonImg = s3Service.upload(multipartFile, "lessonImg");
-            lessonImgRepository.save(
-                    LessonImg.builder()
-                            .lessonImgId(
-                                    LessonImgId.builder()
-                                            .lessonId(lessonId)
-                                            .lessonImg(lessonImg)
-                                            .build())
-                            .build());
+    public void save(LessonRequestDto lessonRequestDto) {
+        Lesson lesson  = lessonRepository.save(lessonRequestDto.toEntity());
+        if(lessonRequestDto.getImages()!=null) {
+            for (MultipartFile multipartFile : lessonRequestDto.getImages()) {
+                String lessonImg = s3Service.upload(multipartFile, "lessonImg");
+                lessonImgRepository.save(
+                        LessonImg.builder()
+                                .lessonImgId(
+                                        LessonImgId.builder()
+                                                .lessonId(lesson.getLessonId())
+                                                .lessonImg(lessonImg)
+                                                .build())
+                                .build());
+            }
         }
     }
 
@@ -65,15 +66,18 @@ public class LessonService {
     }
 
     @Transactional
-    public void delete(int lessonId){
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId));
+    public boolean delete(int lessonId){
+
+        Optional<Lesson> lesson = lessonRepository.findById(lessonId);
+        if(!lesson.isPresent())
+            return false;
         List<LessonImg> lessonImgs = lessonImgRepository.findByLessonId(lessonId);
         for(LessonImg lessonImg : lessonImgs){
             s3Service.deleteImage(lessonImg.getLessonImgId().getLessonImg());
         }
         lessonImgRepository.deleteAllByLessonId(lessonId);
-        lessonRepository.delete(lesson);
+        lessonRepository.delete(lesson.get());
+        return true;
     }
 
     @Transactional
