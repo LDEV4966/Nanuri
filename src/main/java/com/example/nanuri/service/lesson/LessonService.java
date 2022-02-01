@@ -7,15 +7,15 @@ import com.example.nanuri.domain.lesson.lessonImg.LessonImgId;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgRepository;
 import com.example.nanuri.dto.lesson.LessonRequestDto;
 import com.example.nanuri.dto.lesson.LessonResponseDto;
+import com.example.nanuri.handler.exception.ErrorCode;
+import com.example.nanuri.handler.exception.LessonNotFoundException;
 import com.example.nanuri.service.aws.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -61,14 +61,14 @@ public class LessonService {
     @Transactional(readOnly = true)
     public LessonResponseDto findById(int lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId) );
+                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
         return new LessonResponseDto(lesson);
     }
 
     @Transactional
     public void delete(int lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId));
+                .orElseThrow(() -> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
         List<LessonImg> lessonImgs = lessonImgRepository.findByLessonId(lessonId);
         for(LessonImg lessonImg : lessonImgs){
             s3Service.deleteImage(lessonImg.getLessonImgId().getLessonImg());
@@ -81,7 +81,7 @@ public class LessonService {
     @Transactional
     public void updateStatus(int lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new IllegalArgumentException("해당 레슨이 없습니다. lessonId = "+lessonId));
+                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
         lesson.updateStatus();
     }
 

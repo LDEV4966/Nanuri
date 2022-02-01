@@ -1,6 +1,7 @@
 package com.example.nanuri.dto.http;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class SuccessResponse extends BasicResponse {
@@ -8,6 +9,6 @@ public class SuccessResponse extends BasicResponse {
     private int status;
 
     public SuccessResponse() {
-        this.status = HttpStatusEnum.OK.statusCode;
+        this.status = HttpStatus.OK.value();
     }
 }

@@ -37,6 +37,12 @@ public class LessonApiController {
         return ResponseEntity.ok().body(new SuccessDataResponse<List<LessonResponseDto>>(lessonResponseDtos));
     }
 
+    @DeleteMapping(path = "/lesson/{lessonId}")
+    public ResponseEntity<? extends BasicResponse> delete(@PathVariable int lessonId){
+        lessonService.delete(lessonId);
+        return ResponseEntity.ok().body(new SuccessResponse());
+    }
+
     @PutMapping(path = "/lesson/{lessonId}/updateStatus")
     public ResponseEntity<? extends BasicResponse> updateStatus(@PathVariable int lessonId){
         lessonService.updateStatus(lessonId);
@@ -49,11 +55,6 @@ public class LessonApiController {
         return ResponseEntity.ok().body(new SuccessDataResponse<LessonResponseDto>(lessonResponseDto));
     }
 
-    @DeleteMapping(path = "/lesson/{lessonId}")
-    public ResponseEntity<? extends BasicResponse> delete(@PathVariable int lessonId){
-        lessonService.delete(lessonId);
-        return ResponseEntity.ok().body(new SuccessResponse());
-    }
 
 
 }
