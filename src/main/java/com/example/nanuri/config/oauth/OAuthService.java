@@ -34,9 +34,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         Map<String,Object> attributes = oAuth2User.getAttributes();
 
         // OAuth 서비스에서 얻은 이름과 정보로  OAuth 서비스에 종속적이지 않은 공통된 UserProfile 이라는 객체를 만든다.
-        UserProfille userProfille = OAuthAttributes.extract(registrationId,attributes);
+        UserProfile userProfile = OAuthAttributes.extract(registrationId,attributes);
 
-        User user = saveOrUpdate(userProfille);
+        User user = saveOrUpdate(userProfile);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
@@ -45,10 +45,10 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         );
     }
 
-    private User saveOrUpdate(UserProfille userProfille){
-        User user = userRepository.findByOauthId(userProfille.getOauthId())
-                .map(m -> m.update(userProfille.getName(),userProfille.getEmail(),userProfille.getImageUrl()))
-                .orElse(userProfille.toUser());
+    private User saveOrUpdate(UserProfile userProfile){
+        User user = userRepository.findByOauthId(userProfile.getOauthId())
+                .map(m -> m.update(userProfile.getName(), userProfile.getEmail(), userProfile.getImageUrl()))
+                .orElse(userProfile.toUser());
         return userRepository.save(user);
     }
 }

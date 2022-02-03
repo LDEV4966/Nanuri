@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserProfille {
+public class UserProfile {
 
     private final String oauthId;
     private final String name;
