@@ -42,4 +42,15 @@ public class User {
         return this.role.getKey();
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", oauthId='" + oauthId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }
