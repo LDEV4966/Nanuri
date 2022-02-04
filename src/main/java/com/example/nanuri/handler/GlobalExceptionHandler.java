@@ -60,8 +60,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler( value = Exception.class)
-    protected ResponseEntity<ErrorResponse> handleUnknownException() {
+    protected ResponseEntity<ErrorResponse> handleUnknownException(Exception e) {
         log.error("handleUnknownException throw Exception : {}", ErrorCode.UNKNOWN_ERROR);
+        log.error(e.getMessage());
         return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
     }
 }

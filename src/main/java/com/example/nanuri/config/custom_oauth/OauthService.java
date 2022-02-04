@@ -2,6 +2,7 @@ package com.example.nanuri.config.custom_oauth;
 
 import com.example.nanuri.domain.user.User;
 import com.example.nanuri.domain.user.UserRepository;
+import com.example.nanuri.jwt.JwtTokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ public class OauthService {
 
     private final InMemoryProviderRepository customInMemoryProviderRepository;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public LoginResponse login(String providerName, String code){
 
@@ -35,8 +37,23 @@ public class OauthService {
         User user = saveOrUpdate(userProfile);
 
         //우리 앱의 JWT 토큰 만들기
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getUserId()));
+        String refreshToken = jwtTokenProvider.createRefreshToken();
 
-        return null;
+        //Todo : DB에 refreshToken 추가
+
+        LoginResponse loginResponse = LoginResponse.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .imageUrl(user.getImageUrl())
+                .role(user.getRole())
+                .tokenType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
+        return loginResponse;
     }
 
     private User saveOrUpdate(UserProfile userProfile){

@@ -1,12 +1,11 @@
 package com.example.nanuri.controller.lesson.api;
 
-import com.example.nanuri.domain.lesson.Lesson;
 import com.example.nanuri.dto.http.*;
 import com.example.nanuri.dto.lesson.LessonRequestDto;
 import com.example.nanuri.dto.lesson.LessonResponseDto;
 import com.example.nanuri.service.lesson.LessonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
