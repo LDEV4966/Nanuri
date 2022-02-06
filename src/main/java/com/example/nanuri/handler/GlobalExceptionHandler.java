@@ -3,6 +3,7 @@ package com.example.nanuri.handler;
 import com.example.nanuri.handler.exception.ErrorCode;
 import com.example.nanuri.handler.exception.ErrorResponse;
 import com.example.nanuri.handler.exception.LessonNotFoundException;
+import com.example.nanuri.handler.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.hibernate.TypeMismatchException;
@@ -51,6 +52,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleLessonNotFoundException(){
         log.error("handleLessonNotFoundException throw Exception : {}", ErrorCode.LESSON_NOT_FOUND);
         return ErrorResponse.toResponseEntity(ErrorCode.LESSON_NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = UserNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleUserNotFoundException(){
+        log.error("handleUserNotFoundException throw Exception : {}", ErrorCode.USER_NOT_FOUND);
+        return ErrorResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
     }
 
     @ExceptionHandler(value = TypeMismatchException.class)

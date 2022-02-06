@@ -2,7 +2,6 @@ package com.example.nanuri.config.custom_oauth;
 
 import com.example.nanuri.domain.user.Role;
 import com.example.nanuri.domain.user.User;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 

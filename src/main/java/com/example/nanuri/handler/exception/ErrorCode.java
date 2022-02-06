@@ -18,7 +18,7 @@ public enum ErrorCode {
     FORBIDDEN_RESOURCE(HttpStatus.FORBIDDEN, "접근이 불가능한 자원 입니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     LESSON_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 레슨 정보를 찾을 수 없습니다"),
 
     /* 409 CONFLICT : DB 데이터 관리 충돌 */

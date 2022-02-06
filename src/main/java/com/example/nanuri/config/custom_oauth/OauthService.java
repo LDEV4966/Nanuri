@@ -1,8 +1,12 @@
 package com.example.nanuri.config.custom_oauth;
 
+import com.example.nanuri.domain.token.RefreshToken;
 import com.example.nanuri.domain.user.User;
 import com.example.nanuri.domain.user.UserRepository;
-import com.example.nanuri.jwt.JwtTokenProvider;
+import com.example.nanuri.dto.http.LoginResponse;
+import com.example.nanuri.dto.token.Token;
+import com.example.nanuri.config.jwt.JwtTokenProvider;
+import com.example.nanuri.service.token.RefreshTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -22,6 +26,7 @@ public class OauthService {
     private final InMemoryProviderRepository customInMemoryProviderRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     public LoginResponse login(String providerName, String code){
 
@@ -39,18 +44,27 @@ public class OauthService {
         //우리 앱의 JWT 토큰 만들기
         String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getUserId()));
         String refreshToken = jwtTokenProvider.createRefreshToken();
+        Token token = Token.builder()
+                .accessToken(accessToken)
+                .accessTokenValidityInMilliseconds(jwtTokenProvider.getAccessTokenValidityInMilliseconds())
+                .refreshToken(refreshToken)
+                .refreshTokenValidityInMilliseconds(jwtTokenProvider.getRefreshTokenValidityInMilliseconds())
+                .build();
 
-        //Todo : DB에 refreshToken 추가
+        // DB에 refreshToken 추가
+        refreshTokenService.save(RefreshToken.builder()
+                        .userId(user.getUserId().toString())
+                        .refreshToken(refreshToken)
+                         .build());
 
+        // Login Response
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .imageUrl(user.getImageUrl())
                 .role(user.getRole())
-                .tokenType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .token(token)
                 .build();
 
         return loginResponse;
