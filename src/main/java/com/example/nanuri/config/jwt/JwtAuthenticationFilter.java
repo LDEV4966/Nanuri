@@ -1,5 +1,7 @@
 package com.example.nanuri.config.jwt;
 
+import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
+import com.example.nanuri.handler.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

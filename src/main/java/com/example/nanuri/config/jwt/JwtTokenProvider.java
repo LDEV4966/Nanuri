@@ -1,5 +1,8 @@
 package com.example.nanuri.config.jwt;
 
+import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
+import com.example.nanuri.handler.exception.ErrorCode;
+import com.example.nanuri.handler.exception.UnAuthorizedTokenException;
 import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,8 +17,8 @@ import java.util.Random;
 @Component
 public class JwtTokenProvider {
     private static final String SECRET_KEY = "dsjakjsjndjakndnaksasdasdklkansdasDASdajkjsdASDAsdasdASD2313SDASD";
-    private static long accessTokenValidityInMilliseconds = 2*1000*60;
-    private static long refreshTokenValidityInMilliseconds = 12*1000*60;
+    private static long accessTokenValidityInMilliseconds = 1*1000*60;
+    private static long refreshTokenValidityInMilliseconds = 3*1000*60;
 
     public long getRefreshTokenValidityInMilliseconds() {
         return refreshTokenValidityInMilliseconds;
@@ -68,7 +71,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e){
             return e.getClaims().getSubject();
         } catch (JwtException e) {
-            throw  new RuntimeException("유효하지 않는 토큰입니다.");
+            throw new UnAuthorizedTokenException(ErrorCode.UNAUTHORIZED_TOKEN);
         }
     }
 
