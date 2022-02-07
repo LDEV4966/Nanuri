@@ -5,6 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class LessonNotFoundException extends RuntimeException {
+public class AuthenticationEntryPointException extends RuntimeException{ //인가 실패
     private final ErrorCode errorCode;
 }
