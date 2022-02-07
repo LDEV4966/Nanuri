@@ -51,6 +51,8 @@ out/
 
 ### Authentication
 
-application-oauth.properties
+application-local-oauth.properties
+application-real-oauth.properties
+application-custom-oauth.properties
 application-real-db.properties
 application-aws.properties

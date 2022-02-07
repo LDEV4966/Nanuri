@@ -5,6 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class LessonNotFoundException extends RuntimeException {
+public class RefreshTokenNotFoundException extends RuntimeException{
     private final ErrorCode errorCode;
 }
