@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public enum OAuthAttributes {
+
     GOOGLE("google"){
         @Override
         public UserProfile of(Map<String, Object> attributes) {
@@ -28,7 +29,22 @@ public enum OAuthAttributes {
                     .build();
         }
 
-    };
+    },
+    KAKAO("kakao"){
+        @Override
+        public UserProfile of(Map<String, Object> attributes) {
+            String id = String.valueOf(attributes.get("id"));
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
+            return UserProfile.builder()
+                    .oauthId(id)
+                    .email((String) kakaoAccount.get("email"))
+                    .name((String) kakaoProfile.get("nickname"))
+                    .imageUrl((String)kakaoProfile.get("profile_image_url"))
+                    .build();
+        }
+    }
+    ;
     private final String providerName;
 
     OAuthAttributes(String providerName){

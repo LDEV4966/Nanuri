@@ -100,11 +100,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.TYPE_MISMATCH);
     }
 
-    @ExceptionHandler( value = Exception.class)
-    protected ResponseEntity<ErrorResponse> handleUnknownException(Exception e) {
-        log.error("handleUnknownException throw Exception : {}", ErrorCode.UNKNOWN_ERROR);
-        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
-    }
+//    @ExceptionHandler( value = Exception.class)
+//    protected ResponseEntity<ErrorResponse> handleUnknownException(Exception e) {
+//        log.error("handleUnknownException throw Exception : {}", ErrorCode.UNKNOWN_ERROR);
+//        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
+//    }
 
 
 }

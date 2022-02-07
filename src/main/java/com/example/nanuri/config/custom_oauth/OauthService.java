@@ -32,8 +32,14 @@ public class OauthService {
 
         OauthProvider provider = customInMemoryProviderRepository.findByProviderName(providerName);
 
+        OauthTokenResponse tokenResponse;
         // access token 가져오기
-        OauthTokenResponse tokenResponse = getToken(code,provider);
+        System.out.println(providerName);
+        if(providerName.equals("kakao")){ // 카카오는 예외적으로 accesstoken 얻어오는 방식 이 다름
+            tokenResponse = getKakaoToken(code,provider);
+        }else { // 구글, 네이버
+            tokenResponse = getToken(code, provider);
+        }
 
         // access token 으로 유저정보 가져오기
         UserProfile userProfile = getUserProfile(providerName,tokenResponse,provider);
@@ -106,6 +112,28 @@ public class OauthService {
                 .retrieve()
                 .bodyToMono(OauthTokenResponse.class)
                 .block();
+
+    }
+    private OauthTokenResponse getKakaoToken(String code, OauthProvider provider){
+        //webflux를 사용한 서버 통신
+        MultiValueMap<String,String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type","authorization_code");
+        formData.add("client_id", provider.getClientId());
+        formData.add("redirect_uri",provider.getRedirectUrl());
+        formData.add("code",code);
+        formData.add("client_secret", provider.getClientSecret());
+        return WebClient.create()
+                .post()
+                .uri(provider.getTokenUrl())
+                .headers( header -> {
+                    header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    header.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+                })
+                .bodyValue(formData)
+                .retrieve()
+                .bodyToMono(OauthTokenResponse.class)
+                .block();
+
 
     }
 
