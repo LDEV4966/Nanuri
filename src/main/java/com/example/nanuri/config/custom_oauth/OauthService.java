@@ -34,7 +34,6 @@ public class OauthService {
 
         OauthTokenResponse tokenResponse;
         // access token 가져오기
-        System.out.println(providerName);
         if(providerName.equals("kakao")){ // 카카오는 예외적으로 accesstoken 얻어오는 방식 이 다름
             tokenResponse = getKakaoToken(code,provider);
         }else { // 구글, 네이버
@@ -122,6 +121,7 @@ public class OauthService {
         formData.add("redirect_uri",provider.getRedirectUrl());
         formData.add("code",code);
         formData.add("client_secret", provider.getClientSecret());
+        System.out.println(formData);
         return WebClient.create()
                 .post()
                 .uri(provider.getTokenUrl())
