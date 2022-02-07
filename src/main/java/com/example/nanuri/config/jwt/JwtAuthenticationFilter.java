@@ -1,7 +1,5 @@
 package com.example.nanuri.config.jwt;
 
-import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
-import com.example.nanuri.handler.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,10 +22,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     // Request로 들어오는 Jwt Token의 유효성을 검증하는 filter를 filterChain에 등록합니다.
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
-        if (token != null && jwtTokenProvider.validateToken(token)) {   // token 검증
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);    // 인증 객체 생성
-            SecurityContextHolder.getContext().setAuthentication(authentication); // SecurityContextHolder에 인증 객체 저장
+        String authHeader = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+        if (authHeader != null ) {   // token 검증
+            if (authHeader.startsWith("Bearer ")){ // 토큰 타입 Bearer 인증 -> NULL_AUTHENTICATION
+                String token = authHeader.substring(7, authHeader.length());
+                if(jwtTokenProvider.validateToken(token)) { // 토큰 유효한지 인증 -> NULL_AUTHENTICATION
+                    Authentication authentication = jwtTokenProvider.getAuthentication(token);    // 인증 객체 생성
+                    SecurityContextHolder.getContext().setAuthentication(authentication); // SecurityContextHolder에 인증 객체 저장
+                }
+            }
         }
         chain.doFilter(request,response);
     }
