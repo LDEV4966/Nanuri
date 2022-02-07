@@ -17,15 +17,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = HelloController.class)
 public class HelloControllerTest {
 
-    @Autowired //스프링일 관리하는 Bean을 주입 받습니다.
-    private MockMvc mvc;
+//    @Autowired //스프링일 관리하는 Bean을 주입 받습니다.
+//    private MockMvc mvc;
 
-    @Test
-    public void hello가_리턴퇸다() throws Exception{
-        String hello = "hello";
-//        mvc.perform(get("/hello")) // MocMvc 를 통해 /hello 주소로 HTTP GET 요청을 합니다.
-//                .andExpect(status().isOk()); // HTTP Header의 status 결과를 검증. ex) 200(OK),404,500 등
-
-    }
+//    @Test
+//    public void hello가_리턴퇸다() throws Exception{
+//        String hello = "hello";
+////        mvc.perform(get("/hello")) // MocMvc 를 통해 /hello 주소로 HTTP GET 요청을 합니다.
+////                .andExpect(status().isOk()); // HTTP Header의 status 결과를 검증. ex) 200(OK),404,500 등
+//
+//    }
 
 }
