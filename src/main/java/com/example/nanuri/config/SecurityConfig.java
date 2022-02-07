@@ -36,11 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider);
@@ -50,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .cors().disable()
                 .csrf().disable()
-                .headers().frameOptions().disable();
+                .headers().frameOptions().disable(); // h2 console
         http
                 .authorizeRequests()
                 .antMatchers( "/","/h2-console/**","/login/**").permitAll()
@@ -58,8 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/token").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement()//세션관리 설정
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)//서버에 값을 세션값을 저장하지 않고 stateless로 설정함
+                .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new AuthenticationEntryPoint() {
+                .authenticationEntryPoint(new AuthenticationEntryPoint() { // 로그인 되지 않은 사용자의 접근
                     @Override
                     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
                         response.setContentType("application/json;charset=UTF-8");
@@ -71,18 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 + "\", \"code\" : \"" + errorCode.name()
                                 + "\", \"message\" : \"" +  errorCode.getDetail() + "\" }");
                     }
-                })
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement()//세션관리 설정
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//서버에 값을 세션값을 저장하지 않고 stateless로 설정함
-
-
-    }
-
-    @Bean//BCryptPasswordEncoder빈 등록
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+                });
     }
 
 }

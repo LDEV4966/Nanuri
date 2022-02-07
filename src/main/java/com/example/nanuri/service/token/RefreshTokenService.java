@@ -43,7 +43,7 @@ public class RefreshTokenService {
                     .build();
             return token;
         } else {
-            // Todo : 리프레시 토큰 만료되면 그냥 해당 유저아이디의 리프레시 토큰 디비값도 삭제 해야되는 가...? 의문이네 어차피 로그인시 업데이트 되기는 한데..
+            // 리프레시 토큰 만료되면 해당 유저가 재 로그인시 refreshToken 테이블 정보도 업데이트 됨.
             throw new UnAuthorizedRefreshTokenException(ErrorCode.UNAUTHORIZED_REFRESHTOKEN);
         }
     }

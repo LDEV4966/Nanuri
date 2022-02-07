@@ -4,6 +4,7 @@ import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
 import com.example.nanuri.handler.exception.ErrorCode;
 import com.example.nanuri.handler.exception.UnAuthorizedTokenException;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,15 @@ import java.util.Random;
 
 @Component
 public class JwtTokenProvider {
-    private static final String SECRET_KEY = "dsjakjsjndjakndnaksasdasdklkansdasDASdajkjsdASDAsdasdASD2313SDASD";
-    private static long accessTokenValidityInMilliseconds = 1*1000*60;
-    private static long refreshTokenValidityInMilliseconds = 3*1000*60;
+
+    @Value("${jwt.token.secret-key}")
+    private String SECRET_KEY;
+
+    @Value("${jwt.token.accessTokenValidityInMilliseconds}")
+    private long accessTokenValidityInMilliseconds;
+
+    @Value("${jwt.token.refreshTokenValidityInMilliseconds}")
+    private long refreshTokenValidityInMilliseconds;
 
     public long getRefreshTokenValidityInMilliseconds() {
         return refreshTokenValidityInMilliseconds;
