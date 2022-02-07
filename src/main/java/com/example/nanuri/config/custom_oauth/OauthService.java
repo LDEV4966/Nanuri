@@ -121,7 +121,6 @@ public class OauthService {
         formData.add("redirect_uri",provider.getRedirectUrl());
         formData.add("code",code);
         formData.add("client_secret", provider.getClientSecret());
-        System.out.println(formData);
         return WebClient.create()
                 .post()
                 .uri(provider.getTokenUrl())
@@ -133,8 +132,6 @@ public class OauthService {
                 .retrieve()
                 .bodyToMono(OauthTokenResponse.class)
                 .block();
-
-
     }
 
     private MultiValueMap<String,String> tokenRequest(String code, OauthProvider provider){
