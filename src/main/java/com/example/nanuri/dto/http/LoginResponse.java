@@ -1,7 +1,7 @@
 package com.example.nanuri.dto.http;
 
 import com.example.nanuri.domain.user.Role;
-import com.example.nanuri.dto.token.Token;
+import com.example.nanuri.auth.jwt.Token;
 import lombok.Builder;
 import lombok.Getter;
 

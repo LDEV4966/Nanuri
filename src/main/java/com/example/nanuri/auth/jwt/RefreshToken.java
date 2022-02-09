@@ -1,4 +1,4 @@
-package com.example.nanuri.domain.token;
+package com.example.nanuri.auth.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

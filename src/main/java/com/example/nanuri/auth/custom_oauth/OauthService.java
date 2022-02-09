@@ -1,12 +1,12 @@
 package com.example.nanuri.auth.custom_oauth;
 
-import com.example.nanuri.domain.token.RefreshToken;
+import com.example.nanuri.auth.jwt.RefreshToken;
 import com.example.nanuri.domain.user.User;
 import com.example.nanuri.domain.user.UserRepository;
 import com.example.nanuri.dto.http.LoginResponse;
-import com.example.nanuri.dto.token.Token;
+import com.example.nanuri.auth.jwt.Token;
 import com.example.nanuri.auth.jwt.JwtTokenProvider;
-import com.example.nanuri.service.token.RefreshTokenService;
+import com.example.nanuri.auth.jwt.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;

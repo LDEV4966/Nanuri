@@ -3,10 +3,10 @@ package com.example.nanuri.controller.auth.api;
 import com.example.nanuri.auth.custom_oauth.OauthService;
 import com.example.nanuri.dto.http.LoginResponse;
 
-import com.example.nanuri.dto.token.Token;
+import com.example.nanuri.auth.jwt.Token;
 import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
 import com.example.nanuri.handler.exception.ErrorCode;
-import com.example.nanuri.service.token.RefreshTokenService;
+import com.example.nanuri.auth.jwt.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

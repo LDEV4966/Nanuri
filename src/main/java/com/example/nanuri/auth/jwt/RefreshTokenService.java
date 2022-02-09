@@ -1,9 +1,9 @@
-package com.example.nanuri.service.token;
+package com.example.nanuri.auth.jwt;
 
 import com.example.nanuri.auth.jwt.JwtTokenProvider;
-import com.example.nanuri.domain.token.RefreshToken;
-import com.example.nanuri.domain.token.RefreshTokenRepository;
-import com.example.nanuri.dto.token.Token;
+import com.example.nanuri.auth.jwt.RefreshToken;
+import com.example.nanuri.auth.jwt.RefreshTokenRepository;
+import com.example.nanuri.auth.jwt.Token;
 import com.example.nanuri.handler.exception.ErrorCode;
 import com.example.nanuri.handler.exception.RefreshTokenNotFoundException;
 import com.example.nanuri.handler.exception.UnAuthorizedRefreshTokenException;
