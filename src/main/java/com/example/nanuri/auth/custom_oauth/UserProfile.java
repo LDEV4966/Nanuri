@@ -1,4 +1,4 @@
-package com.example.nanuri.config.custom_oauth;
+package com.example.nanuri.auth.custom_oauth;
 
 import com.example.nanuri.domain.user.Role;
 import com.example.nanuri.domain.user.User;

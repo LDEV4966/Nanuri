@@ -1,13 +1,13 @@
-package com.example.nanuri.config.custom_oauth;
+package com.example.nanuri.auth.custom_oauth;
 
 import com.example.nanuri.domain.token.RefreshToken;
 import com.example.nanuri.domain.user.User;
 import com.example.nanuri.domain.user.UserRepository;
 import com.example.nanuri.dto.http.LoginResponse;
 import com.example.nanuri.dto.token.Token;
-import com.example.nanuri.config.jwt.JwtTokenProvider;
+import com.example.nanuri.auth.jwt.JwtTokenProvider;
 import com.example.nanuri.service.token.RefreshTokenService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +16,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OauthService {
 
-    private final InMemoryProviderRepository customInMemoryProviderRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final OauthUserInfoUrl oauthUserInfoUrl;
+
+    private final Map<String,String> userInfoUrl;
 
     public LoginResponse login(String providerName, String oAuthAccessToken){
 
-        OauthProvider provider = customInMemoryProviderRepository.findByProviderName(providerName);
-
         // access token 으로 유저정보 가져오기
-        UserProfile userProfile = getUserProfile(providerName,oAuthAccessToken,provider);
+        UserProfile userProfile = getUserProfile(providerName,oAuthAccessToken);
 
         //유저 DB에 저장
         User user = saveOrUpdate(userProfile);
@@ -70,15 +70,15 @@ public class OauthService {
         return userRepository.save(user);
     }
 
-    private UserProfile getUserProfile(String providerName, String oAuthAccessToken, OauthProvider provider ){
-        Map<String,Object> userAttributes = getUserAttributes(provider,oAuthAccessToken);
-        return OAuthAttributes.extract(providerName,userAttributes);
+    private UserProfile getUserProfile(String providerName, String oAuthAccessToken){
+        Map<String,Object> userAttributes = getUserAttributes(providerName,oAuthAccessToken);
+        return OauthAttributes.extract(providerName,userAttributes);
     }
 
-    private Map<String,Object> getUserAttributes(OauthProvider provider, String oAuthAccessToken){
+    private Map<String,Object> getUserAttributes(String providerName, String oAuthAccessToken){
         return WebClient.create()
                 .get()
-                .uri(provider.getUserInfoUrl())
+                .uri(oauthUserInfoUrl.getByProviderName(providerName))
                 .headers(header -> header.setBearerAuth(oAuthAccessToken))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String,Object>>() {})

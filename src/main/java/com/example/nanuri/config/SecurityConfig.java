@@ -1,25 +1,17 @@
 package com.example.nanuri.config;
 
-import com.example.nanuri.config.jwt.JwtAuthenticationFilter;
-import com.example.nanuri.config.jwt.JwtTokenProvider;
-import com.example.nanuri.handler.exception.AuthenticationEntryPointException;
+import com.example.nanuri.auth.jwt.JwtAuthenticationFilter;
+import com.example.nanuri.auth.jwt.JwtTokenProvider;
 import com.example.nanuri.handler.exception.ErrorCode;
-import com.example.nanuri.handler.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.ServletException;

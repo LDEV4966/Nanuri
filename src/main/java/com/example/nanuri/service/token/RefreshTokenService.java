@@ -1,13 +1,12 @@
 package com.example.nanuri.service.token;
 
-import com.example.nanuri.config.jwt.JwtTokenProvider;
+import com.example.nanuri.auth.jwt.JwtTokenProvider;
 import com.example.nanuri.domain.token.RefreshToken;
 import com.example.nanuri.domain.token.RefreshTokenRepository;
 import com.example.nanuri.dto.token.Token;
 import com.example.nanuri.handler.exception.ErrorCode;
 import com.example.nanuri.handler.exception.RefreshTokenNotFoundException;
 import com.example.nanuri.handler.exception.UnAuthorizedRefreshTokenException;
-import com.example.nanuri.handler.exception.UnAuthorizedTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.example.nanuri.config.jwt;
+package com.example.nanuri.auth.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

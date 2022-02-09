@@ -1,9 +1,9 @@
-package com.example.nanuri.config.custom_oauth;
+package com.example.nanuri.auth.custom_oauth;
 
 import java.util.Arrays;
 import java.util.Map;
 
-public enum OAuthAttributes {
+public enum OauthAttributes {
 
     GOOGLE("google"){
         @Override
@@ -47,7 +47,7 @@ public enum OAuthAttributes {
     ;
     private final String providerName;
 
-    OAuthAttributes(String providerName){
+    OauthAttributes(String providerName){
         this.providerName = providerName;
     }
 

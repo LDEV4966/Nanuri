@@ -1,4 +1,4 @@
-package com.example.nanuri.config.jwt;
+package com.example.nanuri.auth.jwt;
 
 import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
 import com.example.nanuri.handler.exception.ErrorCode;
