@@ -17,7 +17,7 @@ public enum ErrorCode {
 
     /* 403 FORBIDDEN : 해당 권한으로 접근이 허락 되지 않는 정보*/
     FORBIDDEN_AUTHENTICATION(HttpStatus.FORBIDDEN, "권한이 없어 접근이 불가능합니다."),
-    AUTH_ENTRY_DENIED(HttpStatus.FORBIDDEN, "로그인 없이는 접근이 불가능한 경로입니다."),
+    AUTH_ENTRY_DENIED(HttpStatus.FORBIDDEN, "로그인 없이는 접근이 불가능한 경로이거나, 유효한 토큰이 아닙니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),

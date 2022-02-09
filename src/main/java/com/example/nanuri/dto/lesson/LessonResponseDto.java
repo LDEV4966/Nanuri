@@ -13,9 +13,9 @@ import java.util.List;
 @Getter
 public class LessonResponseDto {
 
-    private int lessonId;
+    private Long lessonId;
 
-    private String creator;
+    private Long creator;
 
     private String lessonName;
 

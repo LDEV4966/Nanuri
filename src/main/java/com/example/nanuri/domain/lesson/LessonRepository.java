@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface LessonRepository extends JpaRepository<Lesson,Integer> {
+public interface LessonRepository extends JpaRepository<Lesson,Long> {
 
     @Modifying
     @Query(

@@ -7,6 +7,7 @@ import com.example.nanuri.service.lesson.LessonService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class LessonApiController {
     private final LessonService lessonService;
 
     @PostMapping(path = "/lesson")
-    public ResponseEntity<? extends BasicResponse> save(@ModelAttribute LessonRequestDto lessonRequestDto) {
-        lessonService.save(lessonRequestDto);
+    public ResponseEntity<? extends BasicResponse> save(@ModelAttribute LessonRequestDto lessonRequestDto,Authentication authentication) {
+        lessonService.save(lessonRequestDto,authentication);
         return ResponseEntity.ok().body(new SuccessResponse());
     }
 
@@ -37,19 +38,19 @@ public class LessonApiController {
     }
 
     @DeleteMapping(path = "/lesson/{lessonId}")
-    public ResponseEntity<? extends BasicResponse> delete(@PathVariable int lessonId){
-        lessonService.delete(lessonId);
+    public ResponseEntity<? extends BasicResponse> delete(@PathVariable Long lessonId , Authentication authentication){
+        lessonService.delete(lessonId , authentication);
         return ResponseEntity.ok().body(new SuccessResponse());
     }
 
     @PutMapping(path = "/lesson/{lessonId}/updateStatus")
-    public ResponseEntity<? extends BasicResponse> updateStatus(@PathVariable int lessonId){
-        lessonService.updateStatus(lessonId);
+    public ResponseEntity<? extends BasicResponse> updateStatus(@PathVariable Long lessonId , Authentication authentication){
+        lessonService.updateStatus(lessonId,authentication);
         return ResponseEntity.ok().body(new SuccessResponse());
     }
 
     @GetMapping(path = "/lesson/info/{lessonId}")
-    public ResponseEntity<? extends BasicResponse> findById(@PathVariable int lessonId){
+    public ResponseEntity<? extends BasicResponse> findById(@PathVariable Long lessonId){
         LessonResponseDto lessonResponseDto = lessonService.findById(lessonId);
         return ResponseEntity.ok().body(new SuccessDataResponse<LessonResponseDto>(lessonResponseDto));
     }

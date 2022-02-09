@@ -17,10 +17,10 @@ public class Lesson extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int lessonId;
+    private Long lessonId;
 
     @Column(nullable = false,length = 20)
-    private String creator;
+    private Long creator;
 
     @Column(nullable = false,length = 30)
     private String lessonName;
@@ -46,7 +46,7 @@ public class Lesson extends BaseTimeEntity {
     private List<LessonImg> images;
 
     @Builder
-    public Lesson(String creator, String lessonName, String category, String location, int limitedNumber, String content) {
+    public Lesson(Long creator, String lessonName, String category, String location, int limitedNumber, String content) {
         this.creator = creator;
         this.lessonName = lessonName;
         this.category = category;

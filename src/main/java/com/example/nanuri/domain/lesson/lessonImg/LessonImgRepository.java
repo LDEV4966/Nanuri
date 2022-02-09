@@ -17,11 +17,11 @@ public interface LessonImgRepository extends JpaRepository<LessonImg,LessonImgId
     @Query(
             value = "delete from lesson_img where LESSON_ID = :lessonId" , nativeQuery = true
     )
-    void deleteAllByLessonId(@Param("lessonId") int lessonId);
+    void deleteAllByLessonId(@Param("lessonId") Long lessonId);
 
     @Modifying
     @Query(
             value = "select * from lesson_img where LESSON_ID = :lessonId" , nativeQuery = true
     )
-    List<LessonImg> findByLessonId(int lessonId);
+    List<LessonImg> findByLessonId(Long lessonId);
 }

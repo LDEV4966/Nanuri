@@ -22,6 +22,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestController
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(value = AuthenticationForbiddenException.class)
+    protected ResponseEntity<ErrorResponse> handleAuthenticationForbiddenException() {
+        log.error("handleAuthenticationForbiddenException throw Exception : {}", ErrorCode.FORBIDDEN_AUTHENTICATION);
+        return ErrorResponse.toResponseEntity(ErrorCode.FORBIDDEN_AUTHENTICATION);
+    }
+
     @ExceptionHandler(value = AuthenticationEntryPointException.class)
     protected ResponseEntity<ErrorResponse> handleAuthenticationEntryPointException() {
         log.error("handleFobiddenAuthenticationException throw Exception : {}", ErrorCode.AUTH_ENTRY_DENIED);

@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 public class LessonRequestDto {
 
-    private String creator;
     private String lessonName;
     private String category;
     private String location;
@@ -24,8 +23,7 @@ public class LessonRequestDto {
     @Override
     public String toString() {
         return "LessonRequestDto{" +
-                "creator='" + creator + '\'' +
-                ", lessonName='" + lessonName + '\'' +
+                "lessonName='" + lessonName + '\'' +
                 ", category='" + category + '\'' +
                 ", location='" + location + '\'' +
                 ", limitedNumber=" + limitedNumber +
@@ -34,7 +32,7 @@ public class LessonRequestDto {
                 '}';
     }
 
-    public Lesson toEntity(){
+    public Lesson toEntity(Long creator){
         return Lesson.builder()
                 .creator(creator)
                 .lessonName(lessonName)
