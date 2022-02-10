@@ -66,6 +66,13 @@ public class LessonService {
     }
 
     @Transactional(readOnly = true)
+    public List<LessonResponseDto> findByCreator(Long userId){
+        return lessonRepository.findByCreator(userId).stream()
+                .map( lesson -> new LessonResponseDto(lesson))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public LessonResponseDto findById(Long lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));

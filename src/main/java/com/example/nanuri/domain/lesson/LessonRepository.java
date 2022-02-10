@@ -14,4 +14,10 @@ public interface LessonRepository extends JpaRepository<Lesson,Long> {
             value = "select * from lesson where location = :location" , nativeQuery = true
     )
     List<Lesson> findByLocation(@Param("location") String location);
+
+    @Modifying
+    @Query(
+            value = "select * from lesson where creator = :creator" , nativeQuery = true
+    )
+    List<Lesson> findByCreator(@Param("creator") Long creator);
 }
