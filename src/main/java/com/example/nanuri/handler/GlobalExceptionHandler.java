@@ -2,18 +2,13 @@ package com.example.nanuri.handler;
 
 import com.example.nanuri.handler.exception.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.hibernate.TypeMismatchException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -104,6 +99,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleTypeMismatchException(){
         log.error("handleTypeMismatchException throw Exception : {}", ErrorCode.TYPE_MISMATCH);
         return ErrorResponse.toResponseEntity(ErrorCode.TYPE_MISMATCH);
+    }
+    @ExceptionHandler(value = TokenTypeMismatchException.class)
+    protected ResponseEntity<ErrorResponse> handleTokenTypeMismatchException(){
+        log.error("handleTokenTypeMismatchException throw Exception : {}", ErrorCode.TOKEN_TYPE_MISMATCH);
+        return ErrorResponse.toResponseEntity(ErrorCode.TOKEN_TYPE_MISMATCH);
     }
 
 //    @ExceptionHandler( value = Exception.class)

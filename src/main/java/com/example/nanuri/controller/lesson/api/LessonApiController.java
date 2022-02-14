@@ -1,6 +1,7 @@
 package com.example.nanuri.controller.lesson.api;
 
 import com.example.nanuri.dto.http.*;
+import com.example.nanuri.dto.lesson.LessonRegistrationRequestDto;
 import com.example.nanuri.dto.lesson.LessonRequestDto;
 import com.example.nanuri.dto.lesson.LessonResponseDto;
 import com.example.nanuri.service.lesson.LessonService;
@@ -53,6 +54,11 @@ public class LessonApiController {
     public ResponseEntity<? extends BasicResponse> findById(@PathVariable Long lessonId){
         LessonResponseDto lessonResponseDto = lessonService.findById(lessonId);
         return ResponseEntity.ok().body(new SuccessDataResponse<LessonResponseDto>(lessonResponseDto));
+    }
+
+    @PostMapping(path = "/lesson/{lessonId}/registration")
+    public void saveRegistrationInfo(@PathVariable Long lessonId , Authentication authentication, @RequestBody LessonRegistrationRequestDto lessonRegistrationRequestDto){
+        lessonService.saveRegistrationInfo(lessonId,authentication,lessonRegistrationRequestDto);
     }
 
 

@@ -29,7 +29,7 @@ public class RefreshTokenService {
     @Transactional
     public Token refreshAccessToken(String userId){
         RefreshToken refreshTokenDto = refreshTokenRepository.findById(userId)
-                .orElseThrow(() -> new RefreshTokenNotFoundException(ErrorCode.REFRESH_TOKKEN_NOT_FOUND));
+                .orElseThrow(() -> new RefreshTokenNotFoundException(ErrorCode.REFRESH_TOKKEN_NOT_FOUND)); //404
         String refreshToken = refreshTokenDto.getRefreshToken();
         if(jwtTokenProvider.validateToken(refreshToken)){
             //JWT 토큰 만들기
@@ -43,7 +43,7 @@ public class RefreshTokenService {
             return token;
         } else {
             // 리프레시 토큰 만료되면 해당 유저가 재 로그인시 refreshToken 테이블 정보도 업데이트 됨.
-            throw new UnAuthorizedRefreshTokenException(ErrorCode.UNAUTHORIZED_REFRESHTOKEN);
+            throw new UnAuthorizedRefreshTokenException(ErrorCode.UNAUTHORIZED_REFRESHTOKEN);//401
         }
     }
 }
