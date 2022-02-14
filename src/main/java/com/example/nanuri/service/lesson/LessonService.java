@@ -171,15 +171,6 @@ public class LessonService {
         // 유저 아이디
         Long userId = Long.parseLong(authentication.getName());
 
-        // lesson의 현재 수강인원과 수강정원 비교 후 신청 후 정원 초과라면 상태 업데이트
-        int participantCount = participantRepository.findByLessonId(lessonId).size();
-        if(lesson.getLimitedNumber()-1 == participantCount){
-            lesson.updateStatus();
-        }
-        if(lesson.getLimitedNumber() >= participantCount){
-            return;
-        }
-
         // DB 저장
         registrationRepository.save(
                 Registration
@@ -200,6 +191,15 @@ public class LessonService {
         // lesson 생성자만 레슨 신청허가 가능
         if(lesson.getCreator() != Long.parseLong(authentication.getName())){
             throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+        }
+
+        // lesson의 현재 수강인원과 수강정원 비교 후 신청 후 정원 초과라면 상태 업데이트
+        int participantCount = participantRepository.findByLessonId(lessonId).size();
+        if(lesson.getLimitedNumber()-1 == participantCount){
+            lesson.updateStatus();
+        }
+        if(lesson.getLimitedNumber() >= participantCount){
+            return;
         }
 
         //신청 정보 가져오기
