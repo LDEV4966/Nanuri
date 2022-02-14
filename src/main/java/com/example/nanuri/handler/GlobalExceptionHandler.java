@@ -95,6 +95,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.REFRESH_TOKKEN_NOT_FOUND);
     }
 
+    @ExceptionHandler(value = RegistrationNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleRegistrationNotFoundException(){
+        log.error("handleRefreshTokenNotFoundException throw Exception : {}", ErrorCode.REGISTRAION_NOT_FOUND);
+        return ErrorResponse.toResponseEntity(ErrorCode.REGISTRAION_NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = ParticipantNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleParticipantNotFoundException(){
+        log.error("handleRefreshTokenNotFoundException throw Exception : {}", ErrorCode.PARTICIPANT_NOT_FOUND);
+        return ErrorResponse.toResponseEntity(ErrorCode.PARTICIPANT_NOT_FOUND);
+    }
+
+
     @ExceptionHandler(value = TypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> handleTypeMismatchException(){
         log.error("handleTypeMismatchException throw Exception : {}", ErrorCode.TYPE_MISMATCH);

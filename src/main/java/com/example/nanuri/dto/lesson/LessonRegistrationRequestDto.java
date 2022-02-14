@@ -7,23 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class LessonRegistrationRequestDto {
-    private Long lessonId;
-    private Long userId;
-    private String registerForm;
+
+    private String registrationForm;
 
     @Builder
-    public LessonRegistrationRequestDto(Long lessonId, Long userId, String registerForm) {
-        this.lessonId = lessonId;
-        this.userId = userId;
-        this.registerForm = registerForm;
-    }
-
-    @Override
-    public String toString() {
-        return "LessonRegistrationRequestDto{" +
-                "lessonId=" + lessonId +
-                ", userId=" + userId +
-                ", registerForm='" + registerForm + '\'' +
-                '}';
+    public LessonRegistrationRequestDto(String registrationForm) {
+        this.registrationForm = registrationForm;
     }
 }
