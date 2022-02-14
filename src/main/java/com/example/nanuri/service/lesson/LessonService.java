@@ -1,19 +1,18 @@
 package com.example.nanuri.service.lesson;
 
-import com.example.nanuri.auth.jwt.JwtTokenProvider;
 import com.example.nanuri.domain.lesson.Lesson;
 import com.example.nanuri.domain.lesson.LessonRepository;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImg;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgId;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgRepository;
+import com.example.nanuri.domain.lesson.participant.Participant;
+import com.example.nanuri.domain.lesson.participant.ParticipantId;
+import com.example.nanuri.domain.lesson.participant.ParticipantRepository;
 import com.example.nanuri.domain.lesson.registration.Registration;
 import com.example.nanuri.domain.lesson.registration.RegistrationId;
 import com.example.nanuri.domain.lesson.registration.RegistrationRepository;
 import com.example.nanuri.domain.lesson.registration.RegistrationStatus;
-import com.example.nanuri.dto.lesson.LessonRegistrationRequestDto;
-import com.example.nanuri.dto.lesson.LessonRegistrationResponseDto;
-import com.example.nanuri.dto.lesson.LessonRequestDto;
-import com.example.nanuri.dto.lesson.LessonResponseDto;
+import com.example.nanuri.dto.lesson.*;
 import com.example.nanuri.handler.exception.*;
 import com.example.nanuri.service.aws.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +31,7 @@ public class LessonService {
     private final LessonRepository lessonRepository;
     private final LessonImgRepository lessonImgRepository;
     private final RegistrationRepository registrationRepository;
+    private final ParticipantRepository participantRepository;
     private final S3Service s3Service;
 
     //레슨 저장
@@ -171,8 +171,14 @@ public class LessonService {
         // 유저 아이디
         Long userId = Long.parseLong(authentication.getName());
 
-        // Todo : lesson의 현재 수강인원과 수강정원 비교 및 레슨 모집상태 확인
-
+        // lesson의 현재 수강인원과 수강정원 비교 후 신청 후 정원 초과라면 상태 업데이트
+        int participantCount = participantRepository.findByLessonId(lessonId).size();
+        if(lesson.getLimitedNumber()-1 == participantCount){
+            lesson.updateStatus();
+        }
+        if(lesson.getLimitedNumber() >= participantCount){
+            return;
+        }
 
         // DB 저장
         registrationRepository.save(
@@ -200,7 +206,14 @@ public class LessonService {
         Registration registration = registrationRepository.findById(RegistrationId.builder().userId(userId).lessonId(lessonId).build())
                 .orElseThrow(() -> new RegistrationNotFoundException(ErrorCode.REGISTRAION_NOT_FOUND));
 
+        // Status Enum 수정
         registration.updateRegistraionStatus(RegistrationStatus.ACCEPTED);
+
+        //레슨 참여자에 추가하기
+        participantRepository.save(
+                Participant.builder()
+                        .participantId(ParticipantId.builder().lessonId(lessonId).userId(userId).build())
+                        .build());
 
     }
 
@@ -221,9 +234,72 @@ public class LessonService {
         Registration registration = registrationRepository.findById(RegistrationId.builder().userId(userId).lessonId(lessonId).build())
                 .orElseThrow(() -> new RegistrationNotFoundException(ErrorCode.REGISTRAION_NOT_FOUND));
 
+        // Status Enum 수정
         registration.updateRegistraionStatus(RegistrationStatus.DENIED);
 
         // Todo : 신청자에게 거절 알림 기능
+    }
+
+    //레슨 신청 삭제
+    @Transactional
+    public void deleteLessonRegistration(Long lessonId,Long userId, Authentication authentication){
+        // lesson 찾기
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
+
+        // lesson 생성자만 레슨 신청 삭제 가능
+        if(lesson.getCreator() != Long.parseLong(authentication.getName())){
+            throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+        }
+
+        //신청 정보 가져오기
+        Registration registration = registrationRepository.findById(RegistrationId.builder().userId(userId).lessonId(lessonId).build())
+                .orElseThrow(() -> new RegistrationNotFoundException(ErrorCode.REGISTRAION_NOT_FOUND));
+
+        //신청 기록 삭제
+        registrationRepository.delete(registration);
+    }
+
+    //레슨 참여자 조회
+    @Transactional(readOnly = true)
+    public List<LessonParticipantResponseDto> findLessonParticipant(Long lessonId){
+
+        // 참여자 조회
+        List<Participant> participants = participantRepository.findByLessonId(lessonId);
+
+        return participants.stream()
+                .map( participant ->
+                        LessonParticipantResponseDto
+                                .builder()
+                                .userId(participant.getParticipantId().getUserId())
+                                .lessonId(participant.getParticipantId().getLessonId())
+                                .build())
+                .collect(Collectors.toList());
+    }
+
+    // 레슨 참여자 삭제 (탈퇴 기능)
+    @Transactional
+    public void deleteLessonParticipant(Long lessonId,Long userId){
+
+        // lesson 찾기
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
+
+        //참여자 정보 찾기
+        Participant participant = participantRepository.findById(ParticipantId.builder().userId(userId).lessonId(lessonId).build())
+                .orElseThrow(() -> new ParticipantNotFoundException(ErrorCode.PARTICIPANT_NOT_FOUND));
+
+        participantRepository.delete(participant);
+
+    }
+
+    //레슨 참여자 수 조회
+    @Transactional(readOnly = true)
+    public int findLessonParticipantCount(Long lessonId){
+        // 참여자 조회
+        List<Participant> participants = participantRepository.findByLessonId(lessonId);
+
+        return participants.size();
     }
 
 

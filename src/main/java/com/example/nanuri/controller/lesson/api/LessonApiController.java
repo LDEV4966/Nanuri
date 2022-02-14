@@ -1,10 +1,7 @@
 package com.example.nanuri.controller.lesson.api;
 
 import com.example.nanuri.dto.http.*;
-import com.example.nanuri.dto.lesson.LessonRegistrationRequestDto;
-import com.example.nanuri.dto.lesson.LessonRegistrationResponseDto;
-import com.example.nanuri.dto.lesson.LessonRequestDto;
-import com.example.nanuri.dto.lesson.LessonResponseDto;
+import com.example.nanuri.dto.lesson.*;
 import com.example.nanuri.service.lesson.LessonService;
 import lombok.RequiredArgsConstructor;
 
@@ -79,6 +76,30 @@ public class LessonApiController {
     @PutMapping(path = "/lesson/{lessonId}/registration/deny/{userId}")
     public ResponseEntity<? extends BasicResponse> denyLessonRegistration(@PathVariable Long lessonId,@PathVariable Long userId , Authentication authentication){
         lessonService.denyLessonRegistration(lessonId,userId,authentication);
+        return ResponseEntity.ok().body(new SuccessResponse());
+    }
+
+    @DeleteMapping(path = "/lesson/{lessonId}/registration/{userId}")
+    public ResponseEntity<? extends BasicResponse> deleteLessonRegistration(@PathVariable Long lessonId,@PathVariable Long userId , Authentication authentication){
+        lessonService.deleteLessonRegistration(lessonId,userId,authentication);
+        return ResponseEntity.ok().body(new SuccessResponse());
+    }
+
+    @GetMapping(path = "/lesson/{lessonId}/participant")
+    public ResponseEntity<? extends BasicResponse> findLessonParticipant(@PathVariable Long lessonId){
+        List<LessonParticipantResponseDto> lessonParticipantResponseDtos = lessonService.findLessonParticipant(lessonId);
+        return ResponseEntity.ok().body(new SuccessDataResponse<List<LessonParticipantResponseDto>>(lessonParticipantResponseDtos));
+    }
+
+    @GetMapping(path = "/lesson/{lessonId}/participant/count")
+    public ResponseEntity<? extends BasicResponse> findLessonParticipantCount(@PathVariable Long lessonId){
+        int participantCount = lessonService.findLessonParticipantCount(lessonId);
+        return ResponseEntity.ok().body(new SuccessDataResponse<Integer>(participantCount));
+    }
+
+    @DeleteMapping(path = "/lesson/{lessonId}/participant/{userId}")
+    public ResponseEntity<? extends BasicResponse> deleteLessonParticipant(@PathVariable Long lessonId,@PathVariable Long userId){
+        lessonService.deleteLessonParticipant(lessonId,userId);
         return ResponseEntity.ok().body(new SuccessResponse());
     }
 

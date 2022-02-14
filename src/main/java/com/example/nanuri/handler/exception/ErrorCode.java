@@ -26,6 +26,7 @@ public enum ErrorCode {
     TOKKEN_NOT_FOUND(HttpStatus.NOT_FOUND,"토큰 정보를 찾을 수 없습니다."),
     REFRESH_TOKKEN_NOT_FOUND(HttpStatus.NOT_FOUND,"리프레시 토큰 정보를 찾을 수 없습니다."),
     REGISTRAION_NOT_FOUND(HttpStatus.NOT_FOUND,"신청 정보를 찾을 수 없습니다."),
+    PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND,"참여 정보를 찾을 수 없습니다."),
 
     /* 409 CONFLICT : DB 데이터 관리 충돌 */
     CONSTRAINT_VIOLATION_RESOURCE(HttpStatus.CONFLICT, "DB 제약조건 위반입니다."),
