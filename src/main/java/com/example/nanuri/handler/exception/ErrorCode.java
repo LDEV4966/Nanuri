@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     TYPE_MISMATCH(HttpStatus.BAD_REQUEST,"기대된 class Type으로 값을 등록할 수 없습니다."),
+    TOKEN_TYPE_MISMATCH(HttpStatus.BAD_REQUEST,"Token Type이 Bearer이 아닙니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "권한이 없는 사용자 입니다."),

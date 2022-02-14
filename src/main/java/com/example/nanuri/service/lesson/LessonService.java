@@ -1,10 +1,12 @@
 package com.example.nanuri.service.lesson;
 
+import com.example.nanuri.auth.jwt.JwtTokenProvider;
 import com.example.nanuri.domain.lesson.Lesson;
 import com.example.nanuri.domain.lesson.LessonRepository;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImg;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgId;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgRepository;
+import com.example.nanuri.dto.lesson.LessonRegistrationRequestDto;
 import com.example.nanuri.dto.lesson.LessonRequestDto;
 import com.example.nanuri.dto.lesson.LessonResponseDto;
 import com.example.nanuri.handler.exception.AuthenticationForbiddenException;
@@ -28,6 +30,7 @@ public class LessonService {
     private final LessonRepository lessonRepository;
     private final LessonImgRepository lessonImgRepository;
     private final S3Service s3Service;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public void save(LessonRequestDto lessonRequestDto , Authentication authentication) {
@@ -118,6 +121,26 @@ public class LessonService {
         }
 
         lesson.updateStatus();
+    }
+
+    @Transactional
+    public void saveRegistrationInfo(Long lessonId, Authentication authentication, LessonRegistrationRequestDto lessonRegistrationRequestDto){
+
+        // lesson 찾기
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
+
+        // lesson의 생성자가 api 요청자와 동일한지 확인
+        if(!isAuthorizedUser(lesson.getCreator(),authentication)){
+            return;
+        }
+
+        Long userId = Long.parseLong(authentication.getName());
+
+        System.out.println(lessonRegistrationRequestDto.toString());
+
+        return;
+
     }
 
     private boolean isAuthorizedUser(Long creatorId ,Authentication authentication){
