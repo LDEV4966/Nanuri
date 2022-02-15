@@ -28,4 +28,11 @@ public class UserApiController {
         UserLessonResponseDto userLessonResponseDto = userService.findUserLessonById(userId);
         return ResponseEntity.ok().body(new SuccessDataResponse<UserLessonResponseDto>(userLessonResponseDto));
     }
+
+    @GetMapping(path = "/user/{userId}/lesson/subscription")
+    public ResponseEntity<? extends BasicResponse> findUserSubscribedLessonById(@PathVariable Long userId){
+        UserLessonResponseDto userLessonResponseDto = userService.findUserSubscribedLessonById(userId);
+        return ResponseEntity.ok().body(new SuccessDataResponse<UserLessonResponseDto>(userLessonResponseDto));
+    }
+
 }

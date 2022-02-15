@@ -12,8 +12,8 @@ public class UserLessonResponseDto {
     private UserResponseDto user;
     private List<LessonResponseDto> lessonList;
 
-    public UserLessonResponseDto(UserResponseDto userEntity,List<LessonResponseDto> lessonListEntity){
-        this.user = userEntity;
-        this.lessonList = lessonListEntity;
+    public UserLessonResponseDto(UserResponseDto userResponseDto,List<LessonResponseDto> lessonResponseDtos){
+        this.user = userResponseDto;
+        this.lessonList = lessonResponseDtos;
     }
 }

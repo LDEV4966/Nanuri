@@ -8,11 +8,13 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
+    DEFAULT_BAD_REQUEST(HttpStatus.BAD_REQUEST,"잘못된 요청으로 인해 등록이 불가능 합니다."),
     TYPE_MISMATCH(HttpStatus.BAD_REQUEST,"기대된 class Type으로 값을 등록할 수 없습니다."),
     TOKEN_TYPE_MISMATCH(HttpStatus.BAD_REQUEST,"Token Type이 Bearer이 아닙니다."),
+    DUPLICATE_REGISTRATION(HttpStatus.BAD_REQUEST,"이미 참여하고 있는 회원 정보 입니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
-    UNAUTHORIZED_MEMBER(HttpStatus.UNAUTHORIZED, "권한이 없는 사용자 입니다."),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "권한이 없는 사용자 입니다."),
     UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED,"권한이 없는 토큰 입니다."),
     UNAUTHORIZED_REFRESHTOKEN(HttpStatus.UNAUTHORIZED,"권한이 없는 리프레시 토큰 입니다."),
 

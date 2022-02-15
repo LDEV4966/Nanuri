@@ -35,4 +35,12 @@ public class UserService {
         List<LessonResponseDto> lessonResponseDtos = lessonService.findByCreator(userId);
         return new UserLessonResponseDto(userResponseDto,lessonResponseDtos);
     }
+
+    @Transactional(readOnly = true)
+    public UserLessonResponseDto findUserSubscribedLessonById(Long userId){
+        UserResponseDto userResponseDto = findById(userId);
+        List<LessonResponseDto> lessonResponseDtos = lessonService.findSubscribedLesson(userId);
+        return new UserLessonResponseDto(userResponseDto,lessonResponseDtos);
+    }
+
 }
