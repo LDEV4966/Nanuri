@@ -98,8 +98,8 @@ public class LessonApiController {
     }
 
     @DeleteMapping(path = "/lesson/{lessonId}/participant/{userId}")
-    public ResponseEntity<? extends BasicResponse> deleteLessonParticipant(@PathVariable Long lessonId,@PathVariable Long userId){
-        lessonService.deleteLessonParticipant(lessonId,userId);
+    public ResponseEntity<? extends BasicResponse> deleteLessonParticipant(@PathVariable Long lessonId,@PathVariable Long userId, Authentication authentication){
+        lessonService.deleteLessonParticipant(lessonId,userId,authentication);
         return ResponseEntity.ok().body(new SuccessResponse());
     }
 

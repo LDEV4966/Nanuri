@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -80,6 +81,22 @@ public class LessonService {
                 .map( lesson -> new LessonResponseDto(lesson))
                 .collect(Collectors.toList());
     }
+    @Transactional(readOnly = true)
+    public List<LessonResponseDto> findSubscribedLesson(Long userId){
+
+        // 참여자 조회
+        List<Long> lessonIds = participantRepository.findByUserId(userId);
+
+        // 레슨 id 조회 후 레슨 조회
+        List<Lesson> lessons = lessonIds.stream()
+                .map(lessonId -> lessonRepository.findById(lessonId).orElseThrow(()->new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND)))
+                .collect(Collectors.toList());
+
+        // Dto 변환
+        return lessons.stream()
+                .map( lesson -> new LessonResponseDto(lesson))
+                .collect(Collectors.toList());
+    }
 
     //레슨 아이디로 레슨 상세정보 조회
     @Transactional(readOnly = true)
@@ -109,6 +126,8 @@ public class LessonService {
         for(LessonImg lessonImg : lessonImgs){
             s3Service.deleteImage(lessonImg.getLessonImgId().getLessonImg());
         }
+
+        // Todo : 참여자 및 신청서 삭제
 
         //DB 에 삭제
         lessonImgRepository.deleteAllByLessonId(lessonId);
@@ -142,7 +161,7 @@ public class LessonService {
 
         // lesson 생성자만 신청서를 조회 가능
         if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
         }
 
         List<Registration> registrations = registrationRepository.findByLessonId(lessonId);
@@ -171,6 +190,17 @@ public class LessonService {
         // 유저 아이디
         Long userId = Long.parseLong(authentication.getName());
 
+        // participant에 본인이 있다면 신청 불가능
+        Optional<Participant> participant = participantRepository.findById(ParticipantId.builder().lessonId(lessonId).userId(userId).build());
+        if (participant.isPresent()){
+            throw new DuplicatedRegistrationException(ErrorCode.DUPLICATE_REGISTRATION);
+        }
+
+        // Todo : 본인이 해당 레슨의 생성자일 경우 신청 불가능 => Test를 위해서 임시로 주석 처리 해둠.
+//        if (lesson.getCreator() == Long.parseLong(authentication.getName())){
+//            throw new DefaultBadRequestException(ErrorCode.DEFAULT_BAD_REQUEST);
+//        }
+
         // DB 저장
         registrationRepository.save(
                 Registration
@@ -190,7 +220,7 @@ public class LessonService {
 
         // lesson 생성자만 레슨 신청허가 가능
         if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
         }
 
         // lesson의 현재 수강인원과 수강정원 비교 후 신청 후 정원 초과라면 상태 업데이트
@@ -198,8 +228,8 @@ public class LessonService {
         if(lesson.getLimitedNumber()-1 == participantCount){
             lesson.updateStatus();
         }
-        if(lesson.getLimitedNumber() >= participantCount){
-            return;
+        if(lesson.getLimitedNumber() <= participantCount){
+            return; // 초과시 에러를 던질 필요가 있을끼? 어차피 프론트에서 막아 놓아서 db에만 등록 안되도록 하자.
         }
 
         //신청 정보 가져오기
@@ -227,7 +257,7 @@ public class LessonService {
 
         // lesson 생성자만 레슨 신청거절 가능
         if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_TOKEN);
         }
 
         //신청 정보 가져오기
@@ -249,7 +279,7 @@ public class LessonService {
 
         // lesson 생성자만 레슨 신청 삭제 가능
         if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
         }
 
         //신청 정보 가져오기
@@ -279,7 +309,7 @@ public class LessonService {
 
     // 레슨 참여자 삭제 (탈퇴 기능)
     @Transactional
-    public void deleteLessonParticipant(Long lessonId,Long userId){
+    public void deleteLessonParticipant(Long lessonId,Long userId, Authentication authentication){
 
         // lesson 찾기
         Lesson lesson = lessonRepository.findById(lessonId)
@@ -289,7 +319,12 @@ public class LessonService {
         Participant participant = participantRepository.findById(ParticipantId.builder().userId(userId).lessonId(lessonId).build())
                 .orElseThrow(() -> new ParticipantNotFoundException(ErrorCode.PARTICIPANT_NOT_FOUND));
 
-        participantRepository.delete(participant);
+        // 본인이거나 생성자만이 삭제가 가능해야 한다.
+        if (Long.parseLong(authentication.getName()) == lesson.getCreator() || Long.parseLong(authentication.getName()) == userId ){
+            participantRepository.delete(participant);
+        } else {
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
+        }
 
     }
 
@@ -309,7 +344,7 @@ public class LessonService {
             throw new AuthenticationNullPointerException(ErrorCode.NULL_AUTHENTICATION);
         }
         if( Long.parseLong(authentication.getName()) != creatorId){
-            throw new AuthenticationForbiddenException(ErrorCode.FORBIDDEN_AUTHENTICATION);
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
         }
         return true;
     }

@@ -41,6 +41,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED_REFRESHTOKEN);
     }
 
+    @ExceptionHandler(value = UnAuthorizedUserException.class)
+    protected ResponseEntity<ErrorResponse> handleUnAuthorizedUserException() {
+        log.error("handleUnAuthorizedUserException throw Exception : {}", ErrorCode.UNAUTHORIZED_USER);
+        return ErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED_USER);
+    }
+
     @ExceptionHandler(value = ConstraintViolationException.class)
     protected ResponseEntity<ErrorResponse> handleConstraintViolationException() {
         log.error("handleConstraintViolationException throw Exception : {}", ErrorCode.CONSTRAINT_VIOLATION_RESOURCE);
@@ -108,6 +114,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
+    @ExceptionHandler(value = DefaultBadRequestException.class)
+    protected ResponseEntity<ErrorResponse> handleDefaultBadRequestException(){
+        log.error("handleDefaultBadRequestException throw Exception : {}", ErrorCode.DEFAULT_BAD_REQUEST);
+        return ErrorResponse.toResponseEntity(ErrorCode.DEFAULT_BAD_REQUEST);
+    }
     @ExceptionHandler(value = TypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> handleTypeMismatchException(){
         log.error("handleTypeMismatchException throw Exception : {}", ErrorCode.TYPE_MISMATCH);
@@ -117,6 +128,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleTokenTypeMismatchException(){
         log.error("handleTokenTypeMismatchException throw Exception : {}", ErrorCode.TOKEN_TYPE_MISMATCH);
         return ErrorResponse.toResponseEntity(ErrorCode.TOKEN_TYPE_MISMATCH);
+    }
+    @ExceptionHandler(value = DuplicatedRegistrationException.class)
+    protected ResponseEntity<ErrorResponse> handleDuplicatedRegistrationException(){
+        log.error("handleDuplicatedRegistrationException throw Exception : {}", ErrorCode.DUPLICATE_REGISTRATION);
+        return ErrorResponse.toResponseEntity(ErrorCode.DUPLICATE_REGISTRATION);
     }
 
 //    @ExceptionHandler( value = Exception.class)

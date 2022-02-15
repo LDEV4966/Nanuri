@@ -13,4 +13,10 @@ public interface ParticipantRepository extends JpaRepository<Participant,Partici
             value = "select * from participant where LESSON_ID = :lessonId" , nativeQuery = true
     )
     List<Participant> findByLessonId(@Param("lessonId") Long lessonId);
+
+    @Modifying
+    @Query(
+            value = "select LESSON_ID from participant where USER_ID = :userId" , nativeQuery = true
+    )
+    List<Long> findByUserId(@Param("userId") Long userId);
 }
