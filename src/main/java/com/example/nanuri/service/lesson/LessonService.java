@@ -115,7 +115,7 @@ public class LessonService {
                 .orElseThrow(() -> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
 
         // lesson의 생성자가 api 요청자와 동일한지 확인
-        if(!isAuthorizedUser(lesson.getCreator(),authentication)){
+        if(!isCreator(lesson.getCreator(),authentication)){
             return;
         }
 
@@ -127,10 +127,14 @@ public class LessonService {
             s3Service.deleteImage(lessonImg.getLessonImgId().getLessonImg());
         }
 
-        // Todo : 참여자 및 신청서 삭제
+        // 레슨 관련 참여자 및 신청서 삭제를 위한 조회
+        List<Participant> participants = participantRepository.findByLessonId(lessonId);
+        List<Registration> registrations = registrationRepository.findByLessonId(lessonId);
 
         //DB 에 삭제
         lessonImgRepository.deleteAllByLessonId(lessonId);
+        participantRepository.deleteAll(participants);
+        registrationRepository.deleteAll(registrations);
         lessonRepository.delete(lesson);
 
     }
@@ -144,7 +148,7 @@ public class LessonService {
                 .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
 
         // lesson의 생성자가 api 요청자와 동일한지 확인
-        if(!isAuthorizedUser(lesson.getCreator(),authentication)){
+        if(!isCreator(lesson.getCreator(),authentication)){
             return;
         }
 
@@ -331,6 +335,11 @@ public class LessonService {
     //레슨 참여자 수 조회
     @Transactional(readOnly = true)
     public int findLessonParticipantCount(Long lessonId){
+
+        // lesson 찾기
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
+
         // 참여자 조회
         List<Participant> participants = participantRepository.findByLessonId(lessonId);
 
@@ -339,7 +348,7 @@ public class LessonService {
 
 
     //생성자와 현 유저가 동일한 지 확인
-    private boolean isAuthorizedUser(Long creatorId ,Authentication authentication){
+    private boolean isCreator(Long creatorId ,Authentication authentication){
         if(authentication==null){
             throw new AuthenticationNullPointerException(ErrorCode.NULL_AUTHENTICATION);
         }
