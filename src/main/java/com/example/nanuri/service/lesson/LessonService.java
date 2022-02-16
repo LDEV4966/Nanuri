@@ -62,7 +62,7 @@ public class LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponseDto> findAll(){
         return lessonRepository.findAll().stream()
-                .map( lesson -> new LessonResponseDto(lesson))
+                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +70,7 @@ public class LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponseDto> findByLocation(String location){
         return lessonRepository.findByLocation(location).stream()
-                .map( lesson -> new LessonResponseDto(lesson))
+                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +78,7 @@ public class LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponseDto> findByCreator(Long userId){
         return lessonRepository.findByCreator(userId).stream()
-                .map( lesson -> new LessonResponseDto(lesson))
+                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
                 .collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
@@ -94,7 +94,7 @@ public class LessonService {
 
         // Dto 변환
         return lessons.stream()
-                .map( lesson -> new LessonResponseDto(lesson))
+                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
                 .collect(Collectors.toList());
     }
 
@@ -103,7 +103,7 @@ public class LessonService {
     public LessonResponseDto findById(Long lessonId){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-        return new LessonResponseDto(lesson);
+        return new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId()));
     }
 
     //레슨 삭제
@@ -232,8 +232,10 @@ public class LessonService {
         if(lesson.getLimitedNumber()-1 == participantCount){
             lesson.updateStatus();
         }
-        if(lesson.getLimitedNumber() <= participantCount){
-            return; // 초과시 에러를 던질 필요가 있을끼? 어차피 프론트에서 막아 놓아서 db에만 등록 안되도록 하자.
+
+        // 참여자 수 초과이거나, 레슨 등록이 불가능한 상태라면,
+        if(lesson.getLimitedNumber() <= participantCount || lesson.getStatus() == false){
+            throw new DefaultBadRequestException(ErrorCode.DEFAULT_BAD_REQUEST); // 초과시 에러를 던질 필요가 있을끼? 어차피 프론트에서 막아 놓아서 db에만 등록 안되도록 하자.
         }
 
         //신청 정보 가져오기
