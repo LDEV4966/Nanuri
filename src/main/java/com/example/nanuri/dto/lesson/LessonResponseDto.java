@@ -25,6 +25,8 @@ public class LessonResponseDto {
 
     private int limitedNumber;
 
+    private int participantNumber;
+
     private String content;
 
     private LocalDateTime createDate;
@@ -33,13 +35,14 @@ public class LessonResponseDto {
 
     private List<LessonImg> images;
 
-    public LessonResponseDto(Lesson entity){
+    public LessonResponseDto(Lesson entity , int participantNumber){
         this.lessonId = entity.getLessonId();
         this.creator = entity.getCreator();
         this.lessonName = entity.getLessonName();
         this.category = entity.getCategory();
         this.location = entity.getLocation();
         this.limitedNumber = entity.getLimitedNumber();
+        this.participantNumber = participantNumber;
         this.content = entity.getContent();
         this.createDate = entity.getCreateDate();
         this.status =entity.getStatus();
