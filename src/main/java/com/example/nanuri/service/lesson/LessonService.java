@@ -149,7 +149,7 @@ public class LessonService {
 
         // lesson의 생성자가 api 요청자와 동일한지 확인
         if(!isCreator(lesson.getCreator(),authentication)){
-            return;
+            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
         }
 
         lesson.updateStatus();
@@ -229,13 +229,14 @@ public class LessonService {
 
         // lesson의 현재 수강인원과 수강정원 비교 후 신청 후 정원 초과라면 상태 업데이트
         int participantCount = participantRepository.findByLessonId(lessonId).size();
-        if(lesson.getLimitedNumber()-1 == participantCount){
-            lesson.updateStatus();
-        }
 
         // 참여자 수 초과이거나, 레슨 등록이 불가능한 상태라면,
         if(lesson.getLimitedNumber() <= participantCount || lesson.getStatus() == false){
             throw new DefaultBadRequestException(ErrorCode.DEFAULT_BAD_REQUEST); // 초과시 에러를 던질 필요가 있을끼? 어차피 프론트에서 막아 놓아서 db에만 등록 안되도록 하자.
+        }
+
+        if(lesson.getLimitedNumber()-1 == participantCount){ // 현재 유저 추가 후 참여자 수가 증가시, lesson 의 limitedNumber와 같으면 모집 상태 변경
+            lesson.updateStatus();
         }
 
         //신청 정보 가져오기
