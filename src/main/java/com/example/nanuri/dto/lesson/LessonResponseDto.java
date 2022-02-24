@@ -33,20 +33,34 @@ public class LessonResponseDto {
 
     private Boolean status;
 
+    private Boolean registrationStatus;
+
+    private Boolean participantStatus;
+
     private List<LessonImg> images;
 
-    public LessonResponseDto(Lesson entity , int participantNumber){
+    public LessonResponseDto(Lesson entity){
         this.lessonId = entity.getLessonId();
         this.creator = entity.getCreator();
         this.lessonName = entity.getLessonName();
         this.category = entity.getCategory();
         this.location = entity.getLocation();
         this.limitedNumber = entity.getLimitedNumber();
-        this.participantNumber = participantNumber;
         this.content = entity.getContent();
         this.createDate = entity.getCreateDate();
         this.status =entity.getStatus();
         this.images = entity.getImages();
+    }
+
+    public LessonResponseDto(Lesson entity , int participantNumber){
+        this(entity);
+        this.participantNumber = participantNumber;
+    }
+
+    public LessonResponseDto(Lesson entity , int participantNumber , Boolean registrationStatus , Boolean participantStatus ){
+        this(entity,participantNumber);
+        this.registrationStatus = registrationStatus;
+        this.participantStatus = participantStatus;
     }
 
 }

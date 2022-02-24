@@ -6,15 +6,18 @@ import com.example.nanuri.domain.lesson.lessonImg.LessonImg;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgId;
 import com.example.nanuri.domain.lesson.lessonImg.LessonImgRepository;
 import com.example.nanuri.domain.lesson.participant.Participant;
-import com.example.nanuri.domain.lesson.participant.ParticipantId;
 import com.example.nanuri.domain.lesson.participant.ParticipantRepository;
 import com.example.nanuri.domain.lesson.registration.Registration;
-import com.example.nanuri.domain.lesson.registration.RegistrationId;
 import com.example.nanuri.domain.lesson.registration.RegistrationRepository;
-import com.example.nanuri.domain.lesson.registration.RegistrationStatus;
-import com.example.nanuri.dto.lesson.*;
-import com.example.nanuri.handler.exception.*;
+import com.example.nanuri.dto.lesson.LessonRequestDto;
+import com.example.nanuri.dto.lesson.LessonResponseDto;
+import com.example.nanuri.handler.exception.AuthenticationNullPointerException;
+import com.example.nanuri.handler.exception.ErrorCode;
+import com.example.nanuri.handler.exception.LessonNotFoundException;
+import com.example.nanuri.handler.exception.UnAuthorizedUserException;
 import com.example.nanuri.service.aws.S3Service;
+import com.example.nanuri.service.lesson.participant.ParticipantService;
+import com.example.nanuri.service.lesson.registration.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -33,8 +35,10 @@ public class LessonService {
     private final LessonImgRepository lessonImgRepository;
     private final RegistrationRepository registrationRepository;
     private final ParticipantRepository participantRepository;
-    private final S3Service s3Service;
 
+    private final S3Service s3Service;
+    private final ParticipantService participantService;
+    private final RegistrationService registrationService;
     //레슨 저장
     @Transactional
     public void save(LessonRequestDto lessonRequestDto , Authentication authentication) {
@@ -62,7 +66,7 @@ public class LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponseDto> findAll(){
         return lessonRepository.findAll().stream()
-                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
+                .map( lesson -> new LessonResponseDto(lesson))
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +74,7 @@ public class LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponseDto> findByLocation(String location){
         return lessonRepository.findByLocation(location).stream()
-                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
+                .map( lesson -> new LessonResponseDto(lesson))
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +82,7 @@ public class LessonService {
     @Transactional(readOnly = true)
     public List<LessonResponseDto> findByCreator(Long userId){
         return lessonRepository.findByCreator(userId).stream()
-                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
+                .map( lesson -> new LessonResponseDto(lesson))
                 .collect(Collectors.toList());
     }
     @Transactional(readOnly = true)
@@ -94,16 +98,21 @@ public class LessonService {
 
         // Dto 변환
         return lessons.stream()
-                .map( lesson -> new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId())))
+                .map( lesson -> new LessonResponseDto(lesson))
                 .collect(Collectors.toList());
     }
 
     //레슨 아이디로 레슨 상세정보 조회
     @Transactional(readOnly = true)
-    public LessonResponseDto findById(Long lessonId){
+    public LessonResponseDto findById(Long lessonId,Authentication authentication){
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-        return new LessonResponseDto(lesson,findLessonParticipantCount(lesson.getLessonId()));
+
+        if(authentication==null){
+            return new LessonResponseDto(lesson,participantService.findLessonParticipantCount(lesson.getLessonId()));
+        }
+
+        return new LessonResponseDto(lesson,participantService.findLessonParticipantCount(lesson.getLessonId()),registrationService.isRegistered(lessonId,authentication),participantService.isParticipant(lessonId,authentication));
     }
 
     //레슨 삭제
@@ -131,7 +140,7 @@ public class LessonService {
         List<Participant> participants = participantRepository.findByLessonId(lessonId);
         List<Registration> registrations = registrationRepository.findByLessonId(lessonId);
 
-        //DB 에 삭제
+        //DB 에 삭제0
         lessonImgRepository.deleteAllByLessonId(lessonId);
         participantRepository.deleteAll(participants);
         registrationRepository.deleteAll(registrations);
@@ -155,200 +164,6 @@ public class LessonService {
         lesson.updateStatus();
     }
 
-    //레슨 아이디를 기반으로 레슨 신청자 조회
-    @Transactional(readOnly = true)
-    public List<LessonRegistrationResponseDto> findLessonRegistrationInfoByLessonId(Long lessonId, Authentication authentication){
-
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        // lesson 생성자만 신청서를 조회 가능
-        if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
-        }
-
-        List<Registration> registrations = registrationRepository.findByLessonId(lessonId);
-
-        return registrations.stream()
-                .map( registration ->
-                        LessonRegistrationResponseDto
-                                .builder()
-                                .userId(registration.getRegistrationId().getUserId())
-                                .lessonId(registration.getRegistrationId().getLessonId())
-                                .status(registration.getStatus())
-                                .registrationForm(registration.getRegistrationForm())
-                                .build() )
-                .collect(Collectors.toList());
-
-    }
-
-    //레슨 아이디와 로그인 된 사용자를 기반으로 레슨 신청
-    @Transactional
-    public void saveRegistrationInfo(Long lessonId, Authentication authentication, LessonRegistrationRequestDto lessonRegistrationRequestDto){
-
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        // 유저 아이디
-        Long userId = Long.parseLong(authentication.getName());
-
-        // participant에 본인이 있다면 신청 불가능
-        Optional<Participant> participant = participantRepository.findById(ParticipantId.builder().lessonId(lessonId).userId(userId).build());
-        if (participant.isPresent()){
-            throw new DuplicatedRegistrationException(ErrorCode.DUPLICATE_REGISTRATION);
-        }
-
-        // Todo : 본인이 해당 레슨의 생성자일 경우 신청 불가능 => Test를 위해서 임시로 주석 처리 해둠.
-//        if (lesson.getCreator() == Long.parseLong(authentication.getName())){
-//            throw new DefaultBadRequestException(ErrorCode.DEFAULT_BAD_REQUEST);
-//        }
-
-        // DB 저장
-        registrationRepository.save(
-                Registration
-                .builder()
-                        .registrationId(RegistrationId.builder().lessonId(lessonId).userId(userId).build())
-                        .registrationForm(lessonRegistrationRequestDto.getRegistrationForm())
-                .build());
-    }
-
-    //레슨 신청허가
-    @Transactional
-    public void acceptLessonRegistration(Long lessonId,Long userId, Authentication authentication){
-
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        // lesson 생성자만 레슨 신청허가 가능
-        if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
-        }
-
-        // lesson의 현재 수강인원과 수강정원 비교 후 신청 후 정원 초과라면 상태 업데이트
-        int participantCount = participantRepository.findByLessonId(lessonId).size();
-
-        // 참여자 수 초과이거나, 레슨 등록이 불가능한 상태라면,
-        if(lesson.getLimitedNumber() <= participantCount || lesson.getStatus() == false){
-            throw new DefaultBadRequestException(ErrorCode.DEFAULT_BAD_REQUEST); // 초과시 에러를 던질 필요가 있을끼? 어차피 프론트에서 막아 놓아서 db에만 등록 안되도록 하자.
-        }
-
-        if(lesson.getLimitedNumber()-1 == participantCount){ // 현재 유저 추가 후 참여자 수가 증가시, lesson 의 limitedNumber와 같으면 모집 상태 변경
-            lesson.updateStatus();
-        }
-
-        //신청 정보 가져오기
-        Registration registration = registrationRepository.findById(RegistrationId.builder().userId(userId).lessonId(lessonId).build())
-                .orElseThrow(() -> new RegistrationNotFoundException(ErrorCode.REGISTRAION_NOT_FOUND));
-
-        // Status Enum 수정
-        registration.updateRegistraionStatus(RegistrationStatus.ACCEPTED);
-
-        //레슨 참여자에 추가하기
-        participantRepository.save(
-                Participant.builder()
-                        .participantId(ParticipantId.builder().lessonId(lessonId).userId(userId).build())
-                        .build());
-
-    }
-
-    //레슨 신청거절
-    @Transactional
-    public void denyLessonRegistration(Long lessonId,Long userId, Authentication authentication){
-
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        // lesson 생성자만 레슨 신청거절 가능
-        if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_TOKEN);
-        }
-
-        //신청 정보 가져오기
-        Registration registration = registrationRepository.findById(RegistrationId.builder().userId(userId).lessonId(lessonId).build())
-                .orElseThrow(() -> new RegistrationNotFoundException(ErrorCode.REGISTRAION_NOT_FOUND));
-
-        // Status Enum 수정
-        registration.updateRegistraionStatus(RegistrationStatus.DENIED);
-
-        // Todo : 신청자에게 거절 알림 기능
-    }
-
-    //레슨 신청 삭제
-    @Transactional
-    public void deleteLessonRegistration(Long lessonId,Long userId, Authentication authentication){
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        // lesson 생성자만 레슨 신청 삭제 가능
-        if(lesson.getCreator() != Long.parseLong(authentication.getName())){
-            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
-        }
-
-        //신청 정보 가져오기
-        Registration registration = registrationRepository.findById(RegistrationId.builder().userId(userId).lessonId(lessonId).build())
-                .orElseThrow(() -> new RegistrationNotFoundException(ErrorCode.REGISTRAION_NOT_FOUND));
-
-        //신청 기록 삭제
-        registrationRepository.delete(registration);
-    }
-
-    //레슨 참여자 조회
-    @Transactional(readOnly = true)
-    public List<LessonParticipantResponseDto> findLessonParticipant(Long lessonId){
-
-        // 참여자 조회
-        List<Participant> participants = participantRepository.findByLessonId(lessonId);
-
-        return participants.stream()
-                .map( participant ->
-                        LessonParticipantResponseDto
-                                .builder()
-                                .userId(participant.getParticipantId().getUserId())
-                                .lessonId(participant.getParticipantId().getLessonId())
-                                .build())
-                .collect(Collectors.toList());
-    }
-
-    // 레슨 참여자 삭제 (탈퇴 기능)
-    @Transactional
-    public void deleteLessonParticipant(Long lessonId,Long userId, Authentication authentication){
-
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        //참여자 정보 찾기
-        Participant participant = participantRepository.findById(ParticipantId.builder().userId(userId).lessonId(lessonId).build())
-                .orElseThrow(() -> new ParticipantNotFoundException(ErrorCode.PARTICIPANT_NOT_FOUND));
-
-        // 본인이거나 생성자만이 삭제가 가능해야 한다.
-        if (Long.parseLong(authentication.getName()) == lesson.getCreator() || Long.parseLong(authentication.getName()) == userId ){
-            participantRepository.delete(participant);
-        } else {
-            throw new UnAuthorizedUserException(ErrorCode.UNAUTHORIZED_USER);
-        }
-
-    }
-
-    //레슨 참여자 수 조회
-    @Transactional(readOnly = true)
-    public int findLessonParticipantCount(Long lessonId){
-
-        // lesson 찾기
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(()-> new LessonNotFoundException(ErrorCode.LESSON_NOT_FOUND));
-
-        // 참여자 조회
-        List<Participant> participants = participantRepository.findByLessonId(lessonId);
-
-        return participants.size();
-    }
-
 
     //생성자와 현 유저가 동일한 지 확인
     private boolean isCreator(Long creatorId ,Authentication authentication){
@@ -360,5 +175,6 @@ public class LessonService {
         }
         return true;
     }
+
 
 }

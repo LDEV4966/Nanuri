@@ -1,6 +1,6 @@
 package com.example.nanuri.dto.lesson;
 
-import com.example.nanuri.domain.lesson.registration.RegistrationStatus;
+import com.example.nanuri.dto.user.UserResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,17 +11,14 @@ public class LessonRegistrationResponseDto {
 
     private Long lessonId;
 
-    private Long userId;
-
-    private RegistrationStatus status;
+    private UserResponseDto user;
 
     private String registrationForm;
 
     @Builder
-    public LessonRegistrationResponseDto(Long lessonId, Long userId, RegistrationStatus status, String registrationForm) {
+    public LessonRegistrationResponseDto(Long lessonId,UserResponseDto user,String registrationForm) {
         this.lessonId = lessonId;
-        this.userId = userId;
-        this.status = status;
+        this.user = user;
         this.registrationForm = registrationForm;
     }
 }
