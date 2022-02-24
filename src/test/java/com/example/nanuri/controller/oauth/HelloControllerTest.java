@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WebMvcTest(controllers = HelloController.class)
 public class HelloControllerTest {
 
+    //작성
 //    @Autowired //스프링일 관리하는 Bean을 주입 받습니다.
 //    private MockMvc mvc;
 
