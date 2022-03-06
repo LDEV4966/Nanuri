@@ -18,11 +18,10 @@
     - **인증 (  이메일 -  social login (네이버, 카카오))**
 
     - 프로필 이미지, 참여하는 클래스 , 생성한 클래스 목록
-
-![KakaoTalk_Photo_2022-03-07-02-35-19](https://user-images.githubusercontent.com/40168455/156934801-39333be7-162a-4b02-a46a-1005f8c41bfa.jpeg)
-
-![KakaoTalk_Photo_2022-03-07-02-32-29 002](https://user-images.githubusercontent.com/40168455/156934747-a8b4b9f9-4152-4230-833e-408a07b17289.jpeg)
-
+<div >
+    <img width = "100px" height= "200px" src ="https://user-images.githubusercontent.com/40168455/156934801-39333be7-162a-4b02-a46a-1005f8c41bfa.jpeg">
+    <img width = "100px" height= "200px" src ="https://user-images.githubusercontent.com/40168455/156934747-a8b4b9f9-4152-4230-833e-408a07b17289.jpeg">
+</div>   
 
 
 ## 📖 Notion 
