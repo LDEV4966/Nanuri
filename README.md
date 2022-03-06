@@ -1,3 +1,15 @@
-# Nanuri
+# Nanuri Back-end
 
-COVID19 Hackathon
+### 해당 Repository는 Covid-19 SW 해커톤의 나누리 서비스의 백엔드를 구현한 프로젝트 입니다.
+
+## Summary 
+
+지속되는 코로나 19 상황으로 인해 인적 네트워크 형성이 어려운 상황에서, 교육 종사자 및 관련 업계 종사자들의 퇴직 후 사회활동이 줄어든 사람들에게
+
+자신의 가진 재능을 교육 취약계층에게 나누고 사회활동을 할 수 있도록 하는 매칭 커뮤니티 서비스 입니다.
+
+
+## 📖 Notion 
+[프로젝트 소개 링크](https://www.notion.so/Nanuri-34de1123979a49c29524b515dcbed3d4)
+
+
