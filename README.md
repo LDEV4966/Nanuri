@@ -19,8 +19,8 @@
 
     - 프로필 이미지, 참여하는 클래스 , 생성한 클래스 목록
 <div >
-    <img width = "100px" height= "200px" src ="https://user-images.githubusercontent.com/40168455/156934801-39333be7-162a-4b02-a46a-1005f8c41bfa.jpeg">
-    <img width = "100px" height= "200px" src ="https://user-images.githubusercontent.com/40168455/156934747-a8b4b9f9-4152-4230-833e-408a07b17289.jpeg">
+    <img width = "150px" height= "300px" src ="https://user-images.githubusercontent.com/40168455/156934801-39333be7-162a-4b02-a46a-1005f8c41bfa.jpeg">
+    <img width = "150px" height= "300px" src ="https://user-images.githubusercontent.com/40168455/156934747-a8b4b9f9-4152-4230-833e-408a07b17289.jpeg">
 </div>   
 
 
