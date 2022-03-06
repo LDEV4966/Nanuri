@@ -94,7 +94,7 @@
 
 ## Client (IOS) GitHub 링크 :
 
-[IOS GitHub 링크]()
+[IOS GitHub 링크](https://github.com/ParkGyurim99/Nanuri-iOS)
         
 ## 📖 Notion 
 [프로젝트 소개 링크](https://www.notion.so/Nanuri-34de1123979a49c29524b515dcbed3d4)
